@@ -1,5 +1,5 @@
 {
-  "name": "isvaryam",
+  "name": "isvaryamweb_final",
   "private": true,
   "scripts": {
     "start": "node backend/src/server.js",
