@@ -38,7 +38,8 @@ const app = express();
 // ✅ Use single origin: backend domain (local or prod)
 const allowedOrigins = [
   'http://localhost:5000',   // local single-domain
-  'https://isvaryam.com'     // production
+  'https://isvaryam.com',
+  'https://isvaryamweb-final.onrender.com'// production
 ];
 
 app.use((req, res, next) => {
