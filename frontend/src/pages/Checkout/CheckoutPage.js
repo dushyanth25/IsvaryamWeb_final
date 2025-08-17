@@ -62,44 +62,55 @@ export default function CheckoutPage() {
   }, []);
 
   const submit = async data => {
-  if (!order.addressLatLng) {
-    toast.warning('Please select your location on the map');
-    return;
-  }
-
-  const orderToSend = {
-    name: data.name,
-    address: data.address,
-    addressLatLng: {
-      lat: String(order.addressLatLng.lat),
-      lng: String(order.addressLatLng.lng)
-    },
-    couponCode: appliedCoupon ? appliedCoupon.couponCode : null,
-    discount: appliedCoupon ? discount : 0,
-    totalPrice: finalTotal,
-    items: cart.items.map(item => ({
-      product: item.food._id,
-      size: item.size,
-      price: item.price,
-      quantity: item.quantity
-    }))
-  };
-
-  try {
-    const createdOrder = await createOrder(orderToSend); // ✅ Get created order from backend
-    if (!createdOrder || !createdOrder._id) {
-      toast.error("Failed to retrieve order ID from response.");
+    if (!order.addressLatLng) {
+      toast.warning('Please select your location on the map');
       return;
     }
-    navigate(`/payment/${createdOrder._id}`); // ✅ Correct usage
 
+    const addressObj = {
+      doorNumber: data.doorNumber,
+      street: data.street,
+      area: data.area,
+      district: data.district,
+      state: data.state,
+      pincode: data.pincode
+    };
 
+    const orderToSend = {
+      name: data.name,
+      address: addressObj,
+      state: data.state,
+      pincode: data.pincode,
+      cartAddress: order.address,
+      addressLatLng: {
+        lat: String(order.addressLatLng.lat),
+        lng: String(order.addressLatLng.lng)
+      },
+      couponCode: appliedCoupon ? appliedCoupon.couponCode : null,
+      discount: Number(discount) || 0,
+      totalPrice: Number(finalTotal) || 0,
+      items: cart.items.map(item => ({
+        product: item.food._id,
+        size: item.size,
+        price: item.price,
+        quantity: item.quantity
+      }))
+    };
 
-  } catch (err) {
-    console.error('Order creation failed', err);
-    toast.error('Failed to place order. Please try again.');
-  }
-};
+    console.log("Order payload:", orderToSend);
+
+    try {
+      const createdOrder = await createOrder(orderToSend);
+      if (!createdOrder || !createdOrder._id) {
+        toast.error("Failed to retrieve order ID from response.");
+        return;
+      }
+      navigate(`/payment/${createdOrder._id}`);
+    } catch (err) {
+      console.error('Order creation failed', err);
+      toast.error('Failed to place order. Please try again.');
+    }
+  };
 
 
   const handleApplyCoupon = async () => {
@@ -162,15 +173,64 @@ export default function CheckoutPage() {
               </div>
               
               <div className={classes.input_group}>
-                <label htmlFor="address">Delivery Address</label>
+                <label htmlFor="doorNumber">Door Number</label>
                 <input
-                  id="address"
+                  id="doorNumber"
                   className={classes.input_field}
-                  defaultValue={user.address}
-                  placeholder="Enter your delivery address"
-                  {...register('address', { required: true })}
+                  defaultValue={user.address?.doorNumber}
+                  {...register('doorNumber', { required: true })}
                 />
-                {errors.address && <span className={classes.error}>Address is required</span>}
+                {errors.doorNumber && <span className={classes.error}>Door Number is required</span>}
+              </div>
+              <div className={classes.input_group}>
+                <label htmlFor="street">Street</label>
+                <input
+                  id="street"
+                  className={classes.input_field}
+                  defaultValue={user.address?.street}
+                  {...register('street', { required: true })}
+                />
+                {errors.street && <span className={classes.error}>Street is required</span>}
+              </div>
+              <div className={classes.input_group}>
+                <label htmlFor="area">Area</label>
+                <input
+                  id="area"
+                  className={classes.input_field}
+                  defaultValue={user.address?.area}
+                  {...register('area', { required: true })}
+                />
+                {errors.area && <span className={classes.error}>Area is required</span>}
+              </div>
+              <div className={classes.input_group}>
+                <label htmlFor="district">District</label>
+                <input
+                  id="district"
+                  className={classes.input_field}
+                  defaultValue={user.address?.district}
+                  {...register('district', { required: true })}
+                />
+                {errors.district && <span className={classes.error}>District is required</span>}
+              </div>
+              <div className={classes.input_group}>
+                <label htmlFor="state">State</label>
+                <input
+                  id="state"
+                  className={classes.input_field}
+                  defaultValue={user.address?.state}
+                  {...register('state', { required: true })}
+                />
+                {errors.state && <span className={classes.error}>State is required</span>}
+              </div>
+              <div className={classes.input_group}>
+                <label htmlFor="pincode">Pincode</label>
+                <input
+                  id="pincode"
+                  className={classes.input_field}
+                  defaultValue={user.address?.pincode}
+                  {...register('pincode', { required: true })}
+                />
+                {errors.pincode && <span className={classes.error}>Pincode is required</span>}
               </div>
             </div>
             

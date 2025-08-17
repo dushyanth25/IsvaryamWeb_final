@@ -57,14 +57,29 @@ export default function ProfilePage() {
       reset({
         name: user.name || '',
         phone: user.phone || '',
-        address: user.address || '',
+        doorNumber: user.address?.doorNumber || '',
+        street: user.address?.street || '',
+        area: user.address?.area || '',
+        district: user.address?.district || '',
+        state: user.address?.state || '',
+        pincode: user.address?.pincode || '',
         password: '',
       });
     }
   }, [showEditDialog, reset, user]);
 
   const submit = (data) => {
-    updateProfile(data);
+    updateProfile({
+      ...data,
+      address: {
+        doorNumber: data.doorNumber,
+        street: data.street,
+        area: data.area,
+        district: data.district,
+        state: data.state,
+        pincode: data.pincode
+      }
+    });
     setShowEditDialog(false);
   };
 
@@ -81,6 +96,20 @@ export default function ProfilePage() {
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  const formatAddress = (address) => {
+    if (!address) return 'No address provided';
+    if (typeof address === 'string') return address;
+    // If address is an object, join the fields
+    return [
+      address.doorNumber,
+      address.street,
+      address.area,
+      address.district,
+      address.state,
+      address.pincode
+    ].filter(Boolean).join(', ');
   };
 
   return (
@@ -102,7 +131,7 @@ export default function ProfilePage() {
                 <div className={classes.profileInfo}>
                   <h3>{user.name}</h3>
                   <p>
-                    <FaMapMarkerAlt size={12} /> {user.address || 'No address provided'}
+                    <FaMapMarkerAlt size={12} /> {formatAddress(user.address)}
                   </p>
                 </div>
               </div>
@@ -156,7 +185,7 @@ export default function ProfilePage() {
                       </div>
                       <div className={classes.infoGroup}>
                         <label>Shipping Address</label>
-                        <div className={classes.infoValue}>{user.address || 'No address provided'}</div>
+                        <div className={classes.infoValue}>{formatAddress(user.address)}</div>
                       </div>
                     </div>
                   </div>
@@ -244,14 +273,64 @@ export default function ProfilePage() {
                     </div>
 
                     <div className={classes.inputGroup}>
-                      <label>Shipping Address</label>
-                      <textarea
+                      <label>Door Number</label>
+                      <input
                         className={classes.dialogInput}
-                        rows="3"
-                        placeholder="Full address"
-                        {...register('address', { required: true, minLength: 10 })}
-                      ></textarea>
-                      {errors.address && <p className={classes.error}>Address must be at least 10 characters</p>}
+                        type="text"
+                        placeholder="Door Number"
+                        defaultValue={user.address?.doorNumber}
+                        {...register('doorNumber')}
+                      />
+                    </div>
+                    <div className={classes.inputGroup}>
+                      <label>Street</label>
+                      <input
+                        className={classes.dialogInput}
+                        type="text"
+                        placeholder="Street"
+                        defaultValue={user.address?.street}
+                        {...register('street')}
+                      />
+                    </div>
+                    <div className={classes.inputGroup}>
+                      <label>Area</label>
+                      <input
+                        className={classes.dialogInput}
+                        type="text"
+                        placeholder="Area"
+                        defaultValue={user.address?.area}
+                        {...register('area')}
+                      />
+                    </div>
+                    <div className={classes.inputGroup}>
+                      <label>District</label>
+                      <input
+                        className={classes.dialogInput}
+                        type="text"
+                        placeholder="District"
+                        defaultValue={user.address?.district}
+                        {...register('district')}
+                      />
+                    </div>
+                    <div className={classes.inputGroup}>
+                      <label>State</label>
+                      <input
+                        className={classes.dialogInput}
+                        type="text"
+                        placeholder="State"
+                        defaultValue={user.address?.state}
+                        {...register('state')}
+                      />
+                    </div>
+                    <div className={classes.inputGroup}>
+                      <label>Pincode</label>
+                      <input
+                        className={classes.dialogInput}
+                        type="text"
+                        placeholder="Pincode"
+                        defaultValue={user.address?.pincode}
+                        {...register('pincode')}
+                      />
                     </div>
 
                     <div className={classes.inputGroup}>

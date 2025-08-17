@@ -67,20 +67,19 @@ app.use(cors({
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
 
-// ================== API Routes ==================
-app.use('/reviews', reviewRouter);
-app.use('/foods', foodRouter);
-app.use('/otp', otpRoute);
-app.use('/contact', mailRoute);
-app.use('/forget', forgetRouter);
-app.use('/users', userRouter);
-app.use('/orders', orderRouter);
-app.use('/upload', uploadRouter);
-app.use('/whishlist', whishlistRouter);
-app.use('/analytics', analyticsRouter);
-app.use('/cart', cartRouter);
-app.use('/recipes', recipeRouter);
-app.use('/coupons', couponRouter);
+app.use('/api/reviews', reviewRouter);
+app.use('/api/foods', foodRouter);
+app.use('/api/otp', otpRoute);
+app.use('/api/contact', mailRoute);
+app.use('/api/forget', forgetRouter);
+app.use('/api/users', userRouter);
+app.use('/api/orders', orderRouter);
+app.use('/api/upload', uploadRouter);
+app.use('/api/whishlist', whishlistRouter);
+app.use('/api/analytics', analyticsRouter);
+app.use('/api/cart', cartRouter);
+app.use('/api/recipes', recipeRouter);
+app.use('/api/coupons', couponRouter);
 
 // ================== Serve React Frontend (local + prod) ==================
 const frontendPath = path.join(__dirname, '../../frontend/build');

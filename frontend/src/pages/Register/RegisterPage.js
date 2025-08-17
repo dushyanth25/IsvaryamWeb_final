@@ -33,7 +33,17 @@ export default function RegisterModal({ onClose, onSwitchToLogin }) {
   } = useForm();
 
   const submit = async data => {
-    await auth.register(data);
+    await auth.register({
+      ...data,
+      address: {
+        doorNumber: data.doorNumber,
+        street: data.street,
+        area: data.area,
+        district: data.district,
+        state: data.state,
+        pincode: data.pincode
+      }
+    });
   };
 
   // Create regex from EMAIL pattern
@@ -260,14 +270,64 @@ export default function RegisterModal({ onClose, onSwitchToLogin }) {
           </div>
 
           <div className={classes.field}>
-            <label>Address</label>
+            <label>Door Number</label>
             <input
               type="text"
-              {...register('address', { required: true, minLength: 10 })}
-                className={`${classes.input} ${classes.addressInput}`}
-                disabled={!emailVerified}
+              {...register('doorNumber', { required: true })}
+              className={classes.input}
+              disabled={!emailVerified}
             />
-            {errors.address && <p className={classes.error}>Address must be at least 10 characters</p>}
+            {errors.doorNumber && <p className={classes.error}>Door Number is required</p>}
+          </div>
+          <div className={classes.field}>
+            <label>Street</label>
+            <input
+              type="text"
+              {...register('street', { required: true })}
+              className={classes.input}
+              disabled={!emailVerified}
+            />
+            {errors.street && <p className={classes.error}>Street is required</p>}
+          </div>
+          <div className={classes.field}>
+            <label>Area</label>
+            <input
+              type="text"
+              {...register('area', { required: true })}
+              className={classes.input}
+              disabled={!emailVerified}
+            />
+            {errors.area && <p className={classes.error}>Area is required</p>}
+          </div>
+          <div className={classes.field}>
+            <label>District</label>
+            <input
+              type="text"
+              {...register('district', { required: true })}
+              className={classes.input}
+              disabled={!emailVerified}
+            />
+            {errors.district && <p className={classes.error}>District is required</p>}
+          </div>
+          <div className={classes.field}>
+            <label>State</label>
+            <input
+              type="text"
+              {...register('state', { required: true })}
+              className={classes.input}
+              disabled={!emailVerified}
+            />
+            {errors.state && <p className={classes.error}>State is required</p>}
+          </div>
+          <div className={classes.field}>
+            <label>Pincode</label>
+            <input
+              type="text"
+              {...register('pincode', { required: true })}
+              className={classes.input}
+              disabled={!emailVerified}
+            />
+            {errors.pincode && <p className={classes.error}>Pincode is required</p>}
           </div>
 
           <Button 

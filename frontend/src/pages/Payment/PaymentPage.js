@@ -15,14 +15,14 @@ function useQuery() {
 
 export default function PaymentPage() {
   useEffect(() => {
-  const scrollToTop = () => {
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
-  };
+    const scrollToTop = () => {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    };
 
-  const timeout = setTimeout(scrollToTop, 100);
-  return () => clearTimeout(timeout);
-}, []);
+    const timeout = setTimeout(scrollToTop, 100);
+    return () => clearTimeout(timeout);
+  }, []);
 
   const { orderId: routeOrderId } = useParams();
   const query = useQuery();
@@ -36,52 +36,52 @@ export default function PaymentPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-
     const controller = new AbortController();
-   
+
     const fetchOrder = async () => {
-  try {
-    if (!orderId) {
-      setError('Invalid Order ID');
-      return;
-    }
+      try {
+        if (!orderId) {
+          setError('Invalid Order ID');
+          return;
+        }
 
-    const response = await getOrderById(orderId);
-    console.log('getOrderById response:', response); // 👀 still useful for debugging
+        const response = await getOrderById(orderId);
+        console.log('getOrderById response:', response); // 👀 still useful for debugging
 
-    // ✅ If response is an array, take the first item
-    const data = Array.isArray(response) ? response[0] : response;
+        // ✅ If response is an array, take the first item
+        const data = Array.isArray(response) ? response[0] : response;
 
-    if (!data || !Array.isArray(data.items)) {
-      setError('Order not found or invalid order format');
-      return;
-    }
+        console.log('Order object:', data);
 
-    setOrder(data);
+        if (!data || !Array.isArray(data.items)) {
+          setError('Order not found or invalid order format');
+          return;
+        }
 
-    let actualTotal = 0;
-    for (let item of data.items) {
-      const product = item.product;
-      const matched = product?.quantities?.find(q => q.size === item.size);
-      const price = matched?.price || item.price;
-      actualTotal += price * item.quantity;
-    }
+        setOrder(data);
 
-    setRealTotal(actualTotal);
-    setDiscount(actualTotal - data.totalPrice);
-  } catch (err) {
-    console.error(err);
-    setError('Failed to load order. Please try again later.');
-  } finally {
-    setLoading(false);
-  }
-};
+        let actualSubtotal = 0;
+        for (let item of data.items) {
+          const product = item.product;
+          const matched = product?.quantities?.find(q => q.size === item.size);
+          const price = matched?.price || item.price;
+          actualSubtotal += price * item.quantity;
+        }
 
+        setRealTotal(actualSubtotal); // Subtotal (without delivery charge)
+        setDiscount(data.discount || 0); // Discount from backend
+      } catch (err) {
+        console.error(err);
+        setError('Failed to load order. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchOrder();
+    fetchOrder();
 
-  return () => controller.abort();
-}, [orderId]);
+    return () => controller.abort();
+  }, [orderId]);
 
   if (loading) return <div className={classes.loading}></div>;
   if (error) return <div className={classes.error}>{error}</div>;
@@ -105,7 +105,11 @@ export default function PaymentPage() {
             </div>
             <div className={classes.info_row}>
               <div className={classes.info_label}><FaHome /> Delivery Address</div>
-              <div className={classes.info_value}>{order.address}</div>
+              <div className={classes.info_value}>
+                {order.address
+                  ? `${order.address.doorNumber}, ${order.address.street}, ${order.address.area}, ${order.address.district}, ${order.address.state}, ${order.address.pincode}`
+                  : order.address}
+              </div>
             </div>
           </div>
 
@@ -120,6 +124,16 @@ export default function PaymentPage() {
                 <span className={classes.summary_value}>-<Price price={discount} /></span>
               </div>
             )}
+            <div className={classes.summary_row}>
+              <span className={classes.summary_label}>Delivery Charge</span>
+              <span className={classes.summary_value}>
+                {order.deliveryCharge && Number(order.deliveryCharge) > 0 ? (
+                  <Price price={Number(order.deliveryCharge)} />
+                ) : (
+                  <span style={{ color: 'green', fontWeight: 'bold' }}>Free</span>
+                )}
+              </span>
+            </div>
             <div className={`${classes.summary_row} ${classes.final_total}`}>
               <span className={classes.summary_label}>Final Total</span>
               <span className={classes.summary_value}><Price price={order.totalPrice} /></span>
