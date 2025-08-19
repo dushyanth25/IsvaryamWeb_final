@@ -81,7 +81,6 @@ export default function CheckoutPage() {
       address: addressObj,
       state: data.state,
       pincode: data.pincode,
-      cartAddress: order.address,
       addressLatLng: {
         lat: String(order.addressLatLng.lat),
         lng: String(order.addressLatLng.lng)
