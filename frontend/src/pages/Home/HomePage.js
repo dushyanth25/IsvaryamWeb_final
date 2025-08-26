@@ -209,7 +209,7 @@ const [message, setMessage] = useState('');
       try {
         const [imagesRes, colorRes] = await Promise.all([
           axios.get('https://admin-isvaryam.onrender.com/images'),
-          axios.get('http://localhost:5000/api/colors/colorhome'),
+          axios.get('https://isvaryamweb-final.onrender.com/api/colors/colorhome'),
         ]);
 
         if (Array.isArray(imagesRes.data) && imagesRes.data.length > 0) {
