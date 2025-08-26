@@ -1,0 +1,25 @@
+.googleBtn {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  color: #444;
+  border: 1px solid #ddd;
+  border-radius: 24px;
+  font-family: 'Roboto', Arial, sans-serif;
+  font-size: 16px;
+  padding: 10px 24px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(60,64,67,.08);
+  transition: background 0.2s, box-shadow 0.2s;
+  margin: 2px 0 16px 0; 
+  font-weight: 500;
+}
+.googleBtn:hover {
+  background: #f7f7f7;
+  box-shadow: 0 4px 12px rgba(60,64,67,.13);
+}
+.googleLogo {
+  width: 22px;
+  height: 22px;
+  margin-right: 12px;
+}

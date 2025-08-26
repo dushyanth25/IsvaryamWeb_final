@@ -1,0 +1,253 @@
+/* OrderItemsList.module.css */
+
+.container {
+  width: 100%;
+  overflow-x: auto;
+  margin: 20px 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background: #fff;
+}
+
+.table th {
+  text-align: left;
+  padding: 12px 15px;
+  background: #f7f7f7;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #ddd;
+}
+
+.table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+
+.itemRow:hover {
+  background-color: #f9f9f9;
+}
+
+.productHeader {
+  width: 50%;
+}
+
+.priceHeader, 
+.quantityHeader,
+.totalHeader {
+  width: 16.66%;
+  text-align: center;
+}
+
+.productCell {
+  display: flex;
+  align-items: center;
+}
+
+.productLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #0066c0;
+}
+
+.productLink:hover {
+  text-decoration: underline;
+  color: #c45500;
+}
+
+.productImage {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-right: 15px;
+  border-radius: 4px;
+  background: #f7f7f7;
+  padding: 5px;
+}
+
+.productName {
+  flex: 1;
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.priceCell,
+.quantityCell,
+.totalCell {
+  text-align: center;
+}
+
+.quantityCell {
+  font-weight: 500;
+}
+
+.summaryRow {
+  background: #f3f3f3;
+  font-size: 16px;
+}
+
+.summaryLabel {
+  text-align: right;
+  padding: 15px;
+}
+
+.summaryValue {
+  text-align: center;
+  padding: 15px;
+  font-weight: bold;
+}
+
+.totalPrice {
+  font-size: 18px;
+  color: #B12704;
+}
+
+.itemTotalPrice {
+  font-weight: 600;
+}
+
+/* Amazon-like Mobile Responsive Styles */
+@media (max-width: 767px) {
+  .container {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    padding: 0;
+  margin: 15px 0;
+  border-radius: 4px;
+  }
+  
+  .table {
+    display: block;
+    border: none;
+  }
+  
+  .table thead {
+    display: none;
+  }
+  
+  .table tbody {
+    display: block;
+  }
+  
+  .table tr {
+    display: block;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    position: relative;
+  }
+  
+  .table tr:last-child {
+    border-bottom: none;
+  }
+  
+  .table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: none;
+    text-align: left;
+    width: 100%;
+  }
+  
+  .table td:last-child {
+    padding-bottom: 0;
+  }
+  
+  .productCell {
+    flex-direction: row;
+    align-items: center;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .productLink {
+    width: 100%;
+  }
+  
+  .productImage {
+    width: 70px;
+    height: 70px;
+    margin-right: 12px;
+  }
+  
+  .productName {
+    font-size: 14px;
+    padding-right: 10px;
+  }
+  
+  .priceCell::before {
+    content: 'Price:';
+    font-weight: 600;
+    color: #555;
+  }
+  
+  .quantityCell::before {
+    content: 'Qty:';
+    font-weight: 600;
+    color: #555;
+  }
+  
+  .totalCell::before {
+    content: 'Item Total:';
+    font-weight: 600;
+    color: #555;
+  }
+  
+  .summaryRow {
+    display: flex;
+    flex-direction: column;
+    background: #f7f7f7;
+    padding: 15px;
+    border-top: 1px solid #ddd;
+  }
+  
+  .summaryLabel {
+    text-align: center;
+    padding: 5px 0;
+    font-size: 15px;
+  }
+  
+  .summaryValue {
+    text-align: center;
+    padding: 5px 0;
+    font-size: 17px;
+  }
+  
+  .totalPrice {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 480px) {
+  .productImage {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .productName {
+    font-size: 13px;
+  }
+  
+  .table td {
+    font-size: 13px;
+  }
+  
+  .summaryLabel,
+  .summaryValue {
+    font-size: 14px;
+  }
+  
+  .totalPrice {
+    font-size: 16px;
+  }
+}

@@ -1,0 +1,280 @@
+/* map.module.css */
+
+/* Container Styles - keeping your working dimensions */
+.container {
+  position: relative;
+  width: 35rem;
+  height: 22rem;
+  text-align: center;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #d5dbdb;
+  background: #f8f9fa;
+}
+
+/* Map Styles - preserving your important declarations */
+.map {
+  width: 100% !important;
+  height: 100% !important;
+  background: #f3f3f3;
+  z-index: 1;
+}
+
+/* Find Location Button - combining your working styles with Amazon design */
+.find_location {
+  position: absolute;
+  margin: auto;
+  width: 12rem;
+  min-height: 2.5rem;
+  font-size: 1rem;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: white;
+  cursor: pointer;
+  border-radius: 0 0 1rem 1rem;
+  border: none;
+  border-top: 1px solid lightgrey;
+  
+  /* Amazon-style enhancements */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-weight: 600;
+  color: #0f1111;
+  box-shadow: 0 2px 5px rgba(15, 17, 17, 0.1);
+  transition: all 0.2s cubic-bezier(0.39, 0.575, 0.565, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.find_location:hover {
+  background-color: whitesmoke;
+  /* Amazon hover effect */
+  box-shadow: 0 2px 8px rgba(15, 17, 17, 0.15);
+}
+
+.find_location:active {
+  background: #e7e9ec;
+  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.find_location::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2313181F'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E");
+  background-size: contain;
+}
+
+/* Custom Amazon-style Marker */
+.amazon_marker {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  transform: translate(-50%, -100%);
+}
+
+.amazon_marker_pin {
+  width: 24px;
+  height: 24px;
+  background-color: #FF9900;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  position: absolute;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.amazon_marker_pin::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  transform: rotate(45deg);
+}
+
+.amazon_marker_shadow {
+  width: 10px;
+  height: 3px;
+  background-color: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  bottom: -2px;
+  left: 7px;
+  border-radius: 50%;
+  filter: blur(1px);
+}
+
+/* Popup Styles - Amazon-themed */
+.leaflet-popup-content {
+  margin: 12px;
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-weight: 500;
+  color: #0f1111;
+  line-height: 1.4;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(15, 17, 17, 0.15);
+  border: 1px solid #d5dbdb;
+  background: #ffffff;
+  padding: 0;
+  overflow: hidden;
+}
+
+.leaflet-popup-tip-container {
+  margin-top: -1px;
+}
+
+.leaflet-popup-tip {
+  background: white;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  border: 1px solid #d5dbdb;
+  border-bottom-color: transparent;
+  border-right-color: transparent;
+}
+
+/* Header for popup */
+.popup-header {
+  background: #f0f2f2;
+  padding: 8px 12px;
+  border-bottom: 1px solid #d5dbdb;
+  font-weight: 700;
+  color: #0f1111;
+}
+
+.popup-body {
+  padding: 12px;
+}
+
+/* Zoom Controls */
+.leaflet-control-zoom {
+  border: 1px solid #d5dbdb !important;
+  box-shadow: 0 1px 3px rgba(15, 17, 17, 0.1) !important;
+  border-radius: 4px !important;
+  overflow: hidden;
+  margin-right: 10px !important;
+  margin-bottom: 10px !important;
+}
+
+.leaflet-control-zoom a {
+  background: white !important;
+  color: #0f1111 !important;
+  border-bottom: 1px solid #d5dbdb !important;
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  font-size: 18px !important;
+  transition: background 0.1s ease;
+}
+
+.leaflet-control-zoom a:hover {
+  background: #f0f2f2 !important;
+  color: #0f1111 !important;
+}
+
+.leaflet-control-zoom a:first-child {
+  border-radius: 3px 3px 0 0 !important;
+}
+
+.leaflet-control-zoom a:last-child {
+  border-bottom: none !important;
+  border-radius: 0 0 3px 3px !important;
+}
+
+/* Attribution */
+.leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #565959 !important;
+  font-size: 11px !important;
+  padding: 4px 8px !important;
+  border-radius: 3px !important;
+  border: 1px solid #d5dbdb !important;
+  margin-right: 10px !important;
+  margin-bottom: 10px !important;
+  max-width: 80%;
+}
+
+.leaflet-control-attribution a {
+  color: #0066c0 !important;
+  text-decoration: none;
+}
+
+.leaflet-control-attribution a:hover {
+  color: #c45500 !important;
+  text-decoration: underline;
+}
+
+/* Loading State */
+.loading_overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+  gap: 12px;
+}
+
+.loading_text {
+  font-size: 14px;
+  color: #0f1111;
+  font-weight: 500;
+}
+
+.loading_spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #FF9900;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Map Tiles Loading */
+.leaflet-tile-container img {
+  transition: opacity 0.3s ease;
+}
+
+/* Draggable Marker State */
+.leaflet-dragging .amazon_marker_pin {
+  transform: rotate(-45deg) scale(1.1);
+  transition: transform 0.1s ease;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .container {
+    width: 100%;
+    height: 18rem;
+  }
+  
+  .find_location {
+    width: 10rem;
+    min-height: 2.2rem;
+    font-size: 0.9rem;
+  }
+  
+  .leaflet-control-zoom {
+    transform: scale(0.9);
+    transform-origin: bottom right;
+  }
+}

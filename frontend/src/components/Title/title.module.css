@@ -1,0 +1,61 @@
+/* Base Title Styles */
+.title {
+  color: var(--dynamic-color, #131921); /* Amazon-inspired dark blue */
+  font-family: 'Amazon Ember', Arial, sans-serif; /* Amazon's font */
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 8px;
+  margin: 0 0 20px 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+/* Underline effect */
+.title-underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #FF9900, #FEBE10); /* Amazon's orange gradient */
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Hover effects */
+.title:hover {
+  color: #FF9900; /* Amazon orange on hover */
+}
+
+.title:hover .title-underline {
+  width: 100%;
+}
+
+/* Responsive sizes */
+@media (max-width: 768px) {
+  .title {
+    font-size: 24px !important; /* Override inline style on mobile */
+    padding-bottom: 6px;
+    margin: 0 0 15px 0 !important;
+  }
+  
+  .title-underline {
+    height: 3px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 20px !important;
+    text-align: center;
+    display: block;
+  }
+  
+  .title-underline {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

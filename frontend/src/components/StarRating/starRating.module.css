@@ -1,0 +1,80 @@
+/* starRating.module.css */
+
+.rating {
+  display: flex;
+  align-items: center;
+  margin: 0.2rem 0;
+}
+
+/* Base star styles */
+.rating img {
+  transition: all 0.2s ease-in-out;
+  min-width: 16px; /* Ensures stars don't shrink too much on mobile */
+}
+
+/* Hover effects for interactive rating */
+.rating:hover img {
+  opacity: 0.7;
+}
+
+.rating img:hover {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+/* Color variations for different rating states */
+.rating img[src*="full"] {
+  filter: drop-shadow(0 0 1px rgba(255, 215, 0, 0.5));
+}
+
+.rating img[src*="half"] {
+  filter: drop-shadow(0 0 1px rgba(255, 215, 0, 0.5));
+}
+
+/* Container for rating text if needed */
+.ratingText {
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+  color: #007185; /* Amazon's link color */
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .rating {
+    flex-wrap: wrap;
+  }
+  
+  .rating img {
+    width: 14px !important;
+    height: 14px !important;
+    margin-right: 2px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .rating {
+    margin: 0.1rem 0;
+  }
+  
+  .rating img {
+    width: 12px !important;
+    height: 12px !important;
+  }
+  
+  .ratingText {
+    font-size: 0.8rem;
+    margin-left: 0.3rem;
+  }
+}
+
+/* Animation for rating display */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.rating.pulse {
+  animation: pulse 0.5s ease-in-out;
+}
