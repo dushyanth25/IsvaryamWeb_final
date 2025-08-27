@@ -39,7 +39,7 @@ const __dirname = dirname(__filename);
 
 // Initialize Express app
 const app = express();
-
+//https://isvaryamweb-final.onrender.com
 // ✅ Use single origin: backend domain (local or prod)
 const allowedOrigins = [
   'http://localhost:5000',   // local single-domain
