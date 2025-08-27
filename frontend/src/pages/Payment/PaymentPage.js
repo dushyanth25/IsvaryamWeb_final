@@ -270,12 +270,10 @@ export default function PaymentPage() {
         }
 
         const response = await getOrderById(orderId);
-        console.log('getOrderById response:', response); // 👀 still useful for debugging
 
         // ✅ If response is an array, take the first item
         const data = Array.isArray(response) ? response[0] : response;
 
-        console.log('Order object:', data);
 
         if (!data || !Array.isArray(data.items)) {
           setError('Order not found or invalid order format');
