@@ -14,7 +14,6 @@ function App() {
   const { showLoading, hideLoading } = useLoading();
   const [showChatbot, setShowChatbot] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  const [isHovered, setIsHovered] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === '/';
   const isAboutus = location.pathname === '/about';
@@ -54,81 +53,52 @@ function App() {
 
         <Footer />
 
-        {/* Enhanced Chatbot Toggle Button */}
-        <div
-          className="chatbot-toggle-container"
-          style={{
-            position: 'fixed',
-            bottom: '20px',
-            right: '20px',
-            zIndex: 1100,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-end',
-            gap: '10px'
-          }}
-        >
-          {isHovered && (
-            <div style={{
-              backgroundColor: 'white',
-              padding: '8px 12px',
-              borderRadius: '12px',
-              boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: '#333',
-              animation: 'fadeIn 0.3s ease'
-            }}>
-              Need help? Chat with us!
-            </div>
-          )}
-          
+        {/* Chatbot Toggle Button */}
+        <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1100 }}>
           <button
             onClick={toggleChatbot}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
             className="chatbot-toggle-button"
             style={{
-              borderRadius: isMobile ? '25px' : '50%',
-              width: isMobile ? '50px' : '60px',
-              height: isMobile ? '50px' : '60px',
-              backgroundColor: showChatbot ? '#4CAF50' : '#007bff',
+              borderRadius: '50%',
+              width: isMobile ? '56px' : '68px',
+              height: isMobile ? '56px' : '68px',
+              background: 'linear-gradient(135deg, #4CAF50, #2E8B57)',
               color: 'white',
               border: 'none',
-              fontSize: isMobile ? '22px' : '24px',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+              fontSize: isMobile ? '22px' : '28px',
+              boxShadow: '0 6px 12px rgba(0, 0, 0, 0.25)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               transition: 'all 0.3s ease',
               position: 'relative',
-              overflow: 'hidden'
+              animation: 'pulse 1.5s infinite',
             }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'scale(1.1)';
+              e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.35)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.25)';
+            }}
+            title="Chat with us"
           >
-            {/* Animated chat icon */}
-            <div style={{
-              position: 'relative',
-              transition: 'transform 0.3s ease',
-              transform: isHovered ? 'translateY(-2px)' : 'none'
-            }}>
-              {showChatbot ? '✖' : '💬'}
-            </div>
-            
-            {/* Pulsing animation effect */}
-            {!showChatbot && (
-              <div style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                borderRadius: '50%',
-                border: '2px solid #007bff',
-                animation: 'pulse 2s infinite',
-                opacity: '0.5'
-              }}></div>
-            )}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              style={{ width: '28px', height: '28px' }}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.78 9.78 0 01-4-.8l-4 1 1-3.6A8.992 8.992 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
+            </svg>
           </button>
         </div>
 
@@ -149,20 +119,21 @@ function App() {
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              animation: 'slideInUp 0.3s ease'
             }}
           >
             {/* Chatbot Header */}
-            <div style={{
-              backgroundColor: '#4CAF50',
-              color: 'white',
-              padding: '12px 16px',
-              fontWeight: 'bold',
-              fontSize: '16px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
+            <div
+              style={{
+                backgroundColor: '#4CAF50',
+                color: 'white',
+                padding: '12px 16px',
+                fontWeight: 'bold',
+                fontSize: '16px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
               <span>Isvaryam Assistant</span>
               <button
                 onClick={toggleChatbot}
@@ -174,7 +145,7 @@ function App() {
                   fontWeight: 'bold',
                   fontSize: '16px',
                   padding: '0',
-                  lineHeight: '1'
+                  lineHeight: '1',
                 }}
               >
                 ✖
@@ -190,7 +161,7 @@ function App() {
                 border: 'none',
                 flex: 1,
                 backgroundColor: '#f5f5f5',
-                overflow: 'hidden'
+                overflow: 'hidden',
               }}
               scrolling="no"
               allow="microphone; camera"
@@ -200,23 +171,13 @@ function App() {
         )}
       </div>
 
-      {/* Add CSS animations */}
+      {/* CSS for Pulse Animation */}
       <style>
         {`
           @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 0.3; }
-            100% { transform: scale(1); opacity: 0.5; }
-          }
-          
-          @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-          
-          @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.6); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(76, 175, 80, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
           }
         `}
       </style>
