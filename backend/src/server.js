@@ -44,7 +44,7 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:5000',   // local single-domain
   'https://isvaryam.com',
-  'https://isvaryam-admin.onrender.com/',
+  'https://isvaryam-admin.onrender.com',
   'https://isvaryamweb-final.onrender.com'// production
 ];
 
