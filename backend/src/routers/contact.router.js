@@ -15,8 +15,8 @@ router.post("/send-contact-email", async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: "gmail", // Or configure SMTP with host/port
       auth: {
-        user: process.env.SMTP_USER, // your email
-        pass: process.env.SMTP_PASS, // your app password (not normal password)
+        user: process.env.EMAIL_USER, // your email
+        pass: process.env.EMAIL_PASS, // your app password (not normal password)
       },
     });
 
