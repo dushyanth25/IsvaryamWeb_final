@@ -25,7 +25,6 @@ import imageRouter from './routers/image.router.js';
 import colorRouter from './routers/color.router.js';
 
 
-import contactRouter from "./routers/contact.router.js";
 import './models/user.model.js';
 import './models/food.model.js';
 import './models/order.model.js';
@@ -39,12 +38,11 @@ const __dirname = dirname(__filename);
 
 // Initialize Express app
 const app = express();
-//https://isvaryamweb-final.onrender.com
+
 // ✅ Use single origin: backend domain (local or prod)
 const allowedOrigins = [
   'http://localhost:5000',   // local single-domain
   'https://isvaryam.com',
-  'https://isvaryam-admin.onrender.com',
   'https://isvaryamweb-final.onrender.com'// production
 ];
 
@@ -87,7 +85,6 @@ app.use('/api/whishlist', whishlistRouter);
 app.use('/api/im', imageRouter);
 app.use('/api/analytics', analyticsRouter);
 
-app.use('/api/contact', contactRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/recipes', recipeRouter);
 app.use('/api/coupons', couponRouter);
