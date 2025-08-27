@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Price from '../Price/Price';
-import classes from './orderItemsList.module.css'; // Add this import
+import classes from './orderItemsList.module.css';
 
 export default function OrderItemsList({ order, compact = false }) {
+  // Handle empty orders
   if (!order || !order.items || order.items.length === 0) {
     return (
       <div className={classes.container}>
@@ -25,13 +26,13 @@ export default function OrderItemsList({ order, compact = false }) {
         </thead>
         <tbody>
           {order.items.map((item, index) => {
-            // Handle both populated product objects and product IDs
-            const product = typeof item.product === 'object' && item.product !== null 
-              ? item.product 
+            // Safely handle product object
+            const product = item.product && typeof item.product === 'object'
+              ? item.product
               : { _id: item.product, name: 'Product', images: [] };
-            
-            const productId = product._id || item.product;
-            const productName = product.name || 'Product';
+
+            const productId = product._id || `unknown-${index}`;
+            const productName = product.name || 'Unnamed Product';
             const productImage = product.images?.[0] || '/placeholder.png';
 
             return (
@@ -42,22 +43,20 @@ export default function OrderItemsList({ order, compact = false }) {
                       src={productImage}
                       alt={productName}
                       className={classes.productImage}
-                      onError={(e) => {
-                        e.target.src = '/placeholder.png';
-                      }}
+                      onError={(e) => { e.target.src = '/placeholder.png'; }}
                     />
-                    <span className={classes.productName}>{productName}</span>
-                    <span className={classes.productSize}>({item.size})</span>
+                    <div>
+                      <span className={classes.productName}>{productName}</span>
+                      {item.size && <span className={classes.productSize}> ({item.size})</span>}
+                    </div>
                   </Link>
                 </td>
                 <td className={classes.priceCell}>
                   <Price price={item.price} />
                 </td>
-                <td className={classes.quantityCell}>
-                  {item.quantity}
-                </td>
+                <td className={classes.quantityCell}>{item.quantity}</td>
                 <td className={classes.totalCell}>
-                  <Price price={item.price * item.quantity} className={classes.itemTotalPrice} />
+                  <Price price={item.price * item.quantity} />
                 </td>
               </tr>
             );
@@ -65,12 +64,10 @@ export default function OrderItemsList({ order, compact = false }) {
         </tbody>
         <tfoot>
           <tr className={classes.summaryRow}>
-            <td colSpan="2" className={classes.summaryLabel}></td>
-            <td className={classes.summaryLabel}>
-              <strong>Order Total:</strong>
-            </td>
+            <td colSpan="2"></td>
+            <td className={classes.summaryLabel}><strong>Order Total:</strong></td>
             <td className={classes.summaryValue}>
-              <Price price={order.totalPrice} className={classes.totalPrice} />
+              <Price price={order.totalPrice} />
             </td>
           </tr>
         </tfoot>
