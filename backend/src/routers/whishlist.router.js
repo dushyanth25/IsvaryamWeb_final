@@ -8,20 +8,15 @@ const router = Router();
 // Add to wishlist
 router.post(
   '/',
+  auth,
   handler(async (req, res) => {
-    if (!req.user) {
-      // User not logged in
-      return res.status(401).json({ message: 'Please log in first' });
-    }
-
     const { productId } = req.body;
-
+    // Upsert: if exists, set whishlist to true, else create
     const wishlist = await WishlistModel.findOneAndUpdate(
       { userId: req.user.id, productId },
       { whishlist: true },
       { upsert: true, new: true }
     );
-
     res.status(201).json(wishlist);
   })
 );
@@ -29,11 +24,8 @@ router.post(
 // Get all wishlist items for the logged-in user
 router.get(
   '/',
+  auth,
   handler(async (req, res) => {
-    if (!req.user) {
-      return res.status(401).json({ message: 'Please log in first' });
-    }
-
     const items = await WishlistModel.find({ userId: req.user.id, whishlist: true })
       .populate('productId');
     res.json(items);
@@ -41,17 +33,14 @@ router.get(
 );
 
 // Remove from wishlist
+// Remove from wishlist (hard delete)
 router.delete(
   '/:productId',
+  auth,
   handler(async (req, res) => {
-    if (!req.user) {
-      return res.status(401).json({ message: 'Please log in first' });
-    }
-
     const { productId } = req.params;
     await WishlistModel.deleteOne({ userId: req.user.id, productId });
     res.json({ success: true });
   })
 );
-
 export default router;
