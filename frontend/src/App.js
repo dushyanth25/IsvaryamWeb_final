@@ -65,26 +65,58 @@ function App() {
             borderRadius: '50%',
             width: isMobile ? '60px' : '70px',
             height: isMobile ? '60px' : '70px',
-            backgroundColor: 'transparent',
+            backgroundColor: '#1e73be', // Primary blue color
             border: 'none',
-            padding: '0',
             cursor: 'pointer',
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
             transition: 'all 0.3s ease',
-            backgroundImage: `url("/chat-icon.png")`, // <-- Add your image here
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'scale(1.1)';
-            e.currentTarget.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.3)';
+            e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.4)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'scale(1)';
-            e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
           }}
           title="Chat with us"
-        />
+        >
+          <div
+            style={{
+              width: '24px',
+              height: '20px',
+              backgroundColor: 'white',
+              borderRadius: '6px',
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-around',
+              padding: '0 4px',
+            }}
+          >
+            {/* Dots inside */}
+            <span style={{ width: '4px', height: '4px', background: '#1e73be', borderRadius: '50%' }}></span>
+            <span style={{ width: '4px', height: '4px', background: '#1e73be', borderRadius: '50%' }}></span>
+            <span style={{ width: '4px', height: '4px', background: '#1e73be', borderRadius: '50%' }}></span>
+
+            {/* Tail of bubble */}
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '-6px',
+                left: '8px',
+                width: '0',
+                height: '0',
+                borderLeft: '6px solid transparent',
+                borderRight: '6px solid transparent',
+                borderTop: '6px solid white',
+              }}
+            ></div>
+          </div>
+        </button>
 
         {/* Chatbot Popup */}
         {showChatbot && (
