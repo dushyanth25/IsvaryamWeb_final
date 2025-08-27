@@ -17,9 +17,8 @@ axios.interceptors.request.use(
 
 export const createOrder = async order => {
   try {
-    console.log('Creating order with data:', order);
+    
     const { data } = await axios.post('/api/orders/create', order);
-    console.log('Order created successfully:', data);
     return data;
   } catch (error) {
     console.error('Error creating order:', error.response?.data || error.message);
