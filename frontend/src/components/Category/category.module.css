@@ -1,0 +1,37 @@
+.tagsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1rem;
+  justify-content: center;
+  background-color: #f7fafc; /* light background for contrast */
+  border-radius: 12px;
+}
+
+.tagButton {
+  background-color: #26453e;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.95rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tagButton:hover {
+  background-color: #1b322d;
+  transform: scale(1.05);
+}
+
+@media (max-width: 600px) {
+  .tagsContainer {
+    justify-content: flex-start;
+    padding: 1rem 0.5rem;
+  }
+
+  .tagButton {
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+  }
+}

@@ -1,0 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+.container {
+  min-height: 100vh;
+  background-color: #f0f4f8; /* pale blue-gray */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.details {
+  background: #fff;
+  padding: 3rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 420px;
+  box-sizing: border-box;
+}
+
+.Title {
+  font-weight: 700;
+  font-size: 2rem;
+  color: #222;
+  margin-bottom: 2rem;
+  text-align: center;
+  user-select: none;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field label {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.input {
+  padding: 0.65rem 1rem;
+  border: 1.8px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  outline-offset: 2px;
+  font-family: 'Inter', sans-serif;
+}
+
+.input:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 8px rgba(74, 144, 226, 0.4);
+}
+
+.error {
+  color: #d9534f; /* bootstrap red */
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+.passwordContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.passwordContainer input.input {
+  padding-right: 4rem; /* give space for the icon */
+}
+
+.passwordContainer i.fa-eye,
+.passwordContainer i.fa-eye-slash {
+  position: absolute;
+  right: 0.5rem;       /* Move left/right by changing this */
+  top: 50%;          /* Move up/down by changing this */
+  transform: translateY(-50%);
+  font-size: 1.25rem;
+  color: #999;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.25s ease;
+  z-index: 10;
+}
+
+.addressInput {
+  width: 100%;       /* full width */
+  min-width: 300px;  /* optional min width */
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  height:135px;
+  resize: vertical;      /* user can resize vertically */
+  vertical-align: top;
+  text-align: left;
+  overflow: auto;
+  font-family: 'Poppins', sans-serif;
+}
+
+
+button {
+  background: #ff4d6d;             /* Bold vibrant pinkish-red */
+  color: #fff;
+  font-family: 'Poppins', sans-serif;  /* Trendy, clean font */
+  font-weight: 800;
+  font-size: 1.25rem;
+  padding: 0.85rem 2.2rem;
+  border-radius: 50px;             /* Fully rounded pill shape */
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: background 0.4s ease, transform 0.25s ease, box-shadow 0.4s ease;
+  user-select: none;
+  display: inline-block;
+  min-width: 140px;
+}
+
+button:hover,
+button:focus {
+  transform: scale(1.08);
+  outline: none;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+
+.login {
+  margin-top: 1.2rem;
+  font-size: 0.9rem;
+  color: #6c757d;
+  text-align: center;
+}
+
+.login a {
+  color: #4a90e2;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.login a:hover {
+  color: #357ABD;
+  text-decoration: underline;
+}

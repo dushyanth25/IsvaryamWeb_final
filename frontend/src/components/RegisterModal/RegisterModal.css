@@ -1,0 +1,18 @@
+.otpContainer {
+  margin-top: 0.5rem;
+}
+
+.otpButton {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.otpButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}

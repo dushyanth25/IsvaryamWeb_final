@@ -1,0 +1,99 @@
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-150px * 7)); }
+}
+
+.logo-slider-wrapper {
+  margin-top: 10px;
+  width: 100%;
+  background: #fff;
+}
+
+.logo-slider {
+  height: 100px;
+  margin: auto;
+  overflow: hidden;
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+
+.logo-slider::before,
+.logo-slider::after {
+  background: linear-gradient(to right, white 0%, rgba(255, 255, 255, 0) 100%);
+  content: "";
+  height: 100px;
+  position: absolute;
+  width: 200px;
+  z-index: 2;
+}
+
+.logo-slider::after {
+  right: 0;
+  top: 0;
+  transform: rotateZ(180deg);
+}
+
+.logo-slider::before {
+  left: 0;
+  top: 0;
+}
+
+.logo-slide {
+  height: 100px;
+  width: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Default: clean black logos */
+.logo-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  max-width: 90px;
+  filter: grayscale(100%) brightness(0);
+}
+
+/* For last 4 images: preserve detail */
+.logo-slide:nth-child(n+5) img {
+  filter: grayscale(100%) contrast(200%);
+}
+
+
+@media (max-width: 800px) {
+  .logo-slide-track {
+    animation: scroll 40s linear infinite;
+    display: flex;
+    width: calc(150px * 16);
+  }
+}
+
+@media (max-width: 560px) {
+  .logo-slider {
+    height: 80px;
+  }
+  .logo-slide-track {
+    width: calc(120px * 16);
+  }
+  .logo-slide {
+    height: 70px;
+    width: 120px;
+  }
+  .logo-slide img {
+    max-width: 70px;
+  }
+  .logo-slider::before,
+  .logo-slider::after {
+    height: 70px;
+    width: 100px;
+  }
+}
+
+@media (min-width: 801px) {
+  .logo-slide-track {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+}

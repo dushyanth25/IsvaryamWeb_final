@@ -1,0 +1,49 @@
+.refund-container {
+  max-width: 900px;
+  margin: 50px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  line-height: 1.7;
+}
+
+.refund-container h1 {
+  font-size: 2rem;
+  color: #2e7d32;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.refund-container h2 {
+  font-size: 1.4rem;
+  color: #444;
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+
+.refund-container p {
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+
+.refund-container ul {
+  margin: 10px 0 15px 20px;
+  padding: 0;
+}
+
+.refund-container ul li {
+  margin-bottom: 8px;
+}
+
+.refund-container a {
+  color: #2e7d32;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.refund-container a:hover {
+  text-decoration: underline;
+}

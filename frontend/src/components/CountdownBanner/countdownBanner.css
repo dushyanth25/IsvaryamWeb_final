@@ -1,0 +1,106 @@
+.banner_wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #26453e;
+  padding: 2rem 3rem;
+  color: white;
+  flex-wrap: wrap;
+
+  text-align: center;
+}
+
+.banner_content {
+  flex: 1;
+  min-width: 250px;
+  text-align: center;
+}
+
+.banner_content h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.banner_content p {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.timer_wrapper {
+  display: flex;
+  justify-content: center; /* ✅ add this to center the timer */
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  align-items: center;
+  text-align: center;
+  margin-top: 1rem; /* optional spacing */
+}
+
+
+.circle_timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  align-items: center;
+}
+
+.circle {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.time_value {
+  position: absolute;
+  top: 14px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.time_label {
+  font-size: 0.7rem;
+  opacity: 0.8;
+  align-items: center;
+  text-align: center;
+}
+
+.cta_button {
+  margin-top: 1rem;
+}
+
+.cta_button button {
+  background-color: white;
+  color: #26453e;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cta_button button:hover {
+  background-color: #e2e8f0;
+}
+
+@media (max-width: 768px) {
+  .banner_wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .cta_button {
+    width: 100%;
+  }
+
+  .cta_button button {
+    width: 100%;
+  }
+}
+

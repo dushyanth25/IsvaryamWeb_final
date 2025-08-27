@@ -1,0 +1,71 @@
+.shipping-policy {
+  background: #fafafa;
+  padding: 40px 20px;
+  font-family: "Poppins", sans-serif;
+  color: #333;
+  line-height: 1.7;
+}
+
+.shipping-container {
+  max-width: 900px;
+  margin: auto;
+  background: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.shipping-title {
+  font-size: 2.2rem;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.shipping-intro {
+  font-size: 1.1rem;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #555;
+}
+
+.shipping-section {
+  margin-bottom: 30px;
+}
+
+.shipping-section h2 {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+  color: #1a5276;
+}
+
+.shipping-section p,
+.shipping-section ul {
+  font-size: 1rem;
+  color: #444;
+  margin-left: 10px;
+}
+
+.shipping-section ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.shipping-section strong {
+  color: #000;
+}
+
+@media (max-width: 768px) {
+  .shipping-container {
+    padding: 20px;
+  }
+
+  .shipping-title {
+    font-size: 1.8rem;
+  }
+
+  .shipping-intro {
+    font-size: 1rem;
+  }
+}
