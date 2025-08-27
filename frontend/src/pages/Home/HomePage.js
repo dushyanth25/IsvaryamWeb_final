@@ -135,8 +135,6 @@ const clickTimeout = useRef(null);
           axios.get('https://isvaryamweb-final.onrender.com/api/colors/colorhome'),
         ]);
 
-        console.log("Images API Response:", imagesRes.data);
-        console.log("Color API Response:", colorRes.data);
 
         if (Array.isArray(imagesRes.data) && imagesRes.data.length > 0) {
           setBannerImages(imagesRes.data); // use API images
