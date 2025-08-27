@@ -279,12 +279,12 @@ const handleBannerClick = () => {
   onTouchEnd={handleTouchEndBanner}
     >
       <div className="about-hero" style={{ margin: 0, padding: 0, position: "relative" }} 
-  onClick={handleBannerClick}>
+  >
         {current.type === "image" ? (
           <img
             src={current.src}
             alt="Hero Background"
-            style={{ position: "absolute", width: "100%", height: "100%", objectFit: "cover", left: 0, top: 0, zIndex: 0 }}
+            style={{ position: "absolute", width: "100%", height: "100%", objectFit: "cover", left: 0, top: 0, zIndex: 0 }} onClick={handleBannerClick}
           />
         ) : (
           <video
@@ -293,7 +293,7 @@ const handleBannerClick = () => {
             muted
             playsInline
             className="about-hero-video"
-            style={{ position: "absolute", width: "100%", height: "100%", objectFit: "cover", left: 0, top: 0, zIndex: 0 }}
+            style={{ position: "absolute", width: "100%", height: "100%", objectFit: "cover", left: 0, top: 0, zIndex: 0 }} onClick={handleBannerClick}
           >
             <source src={current.src} type="video/mp4" />
             Your browser does not support the video tag.
