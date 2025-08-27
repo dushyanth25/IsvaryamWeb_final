@@ -87,7 +87,7 @@ app.use('/api/whishlist', whishlistRouter);
 app.use('/api/im', imageRouter);
 app.use('/api/analytics', analyticsRouter);
 
-app.use("/api/contact", contactRouter);
+app.use('/api/contact', contactRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/recipes', recipeRouter);
 app.use('/api/coupons', couponRouter);
