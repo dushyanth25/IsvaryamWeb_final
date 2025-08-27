@@ -30,7 +30,7 @@ function App() {
   }, [showLoading, hideLoading]);
 
   const toggleChatbot = () => {
-    setShowChatbot((prev) => !prev);
+    setShowChatbot(prev => !prev);
   };
 
   return (
@@ -53,7 +53,7 @@ function App() {
 
         <Footer />
 
-        {/* Chatbot Toggle Button */}
+        {/* ✅ Chatbot Toggle Button */}
         <button
           onClick={toggleChatbot}
           className="chatbot-toggle-button"
@@ -62,10 +62,10 @@ function App() {
             bottom: '20px',
             right: '20px',
             zIndex: 1100,
-            borderRadius: '50%',
-            width: isMobile ? '60px' : '70px',
+            width: isMobile ? '60px' : '70px', // Equal width & height for circle
             height: isMobile ? '60px' : '70px',
-            backgroundColor: '#1e73be', // Primary blue color
+            borderRadius: '50%',
+            backgroundColor: '#1e73be', // Blue circle
             border: 'none',
             cursor: 'pointer',
             display: 'flex',
@@ -84,17 +84,18 @@ function App() {
           }}
           title="Chat with us"
         >
+          {/* ✅ Chat bubble icon */}
           <div
             style={{
-              width: '24px',
-              height: '20px',
+              width: isMobile ? '22px' : '26px',
+              height: isMobile ? '18px' : '20px',
               backgroundColor: 'white',
               borderRadius: '6px',
               position: 'relative',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-around',
-              padding: '0 4px',
+              padding: '0 3px',
             }}
           >
             {/* Dots inside */}
@@ -106,24 +107,24 @@ function App() {
             <div
               style={{
                 position: 'absolute',
-                bottom: '-6px',
+                bottom: '-5px',
                 left: '8px',
                 width: '0',
                 height: '0',
-                borderLeft: '6px solid transparent',
-                borderRight: '6px solid transparent',
-                borderTop: '6px solid white',
+                borderLeft: '5px solid transparent',
+                borderRight: '5px solid transparent',
+                borderTop: '5px solid white',
               }}
             ></div>
           </div>
         </button>
 
-        {/* Chatbot Popup */}
+        {/* ✅ Chatbot Popup */}
         {showChatbot && (
           <div
             style={{
               position: 'fixed',
-              bottom: isMobile ? '80px' : '90px',
+              bottom: isMobile ? '70px' : '90px',
               right: '20px',
               width: isMobile ? '90vw' : '350px',
               height: isMobile ? '75vh' : '500px',
@@ -135,13 +136,12 @@ function App() {
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              animation: 'fadeInUp 0.3s ease-out',
             }}
           >
             {/* Chatbot Header */}
             <div
               style={{
-                backgroundColor: '#007bff',
+                backgroundColor: '#4CAF50',
                 color: 'white',
                 padding: '12px 16px',
                 fontWeight: 'bold',
