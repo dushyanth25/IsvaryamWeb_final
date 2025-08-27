@@ -277,9 +277,9 @@ const handleBannerClick = () => {
   onMouseUp={handleMouseUpBanner}
   onTouchStart={handleTouchStartBanner}
   onTouchEnd={handleTouchEndBanner}
-  onClick={handleBannerClick}
     >
-      <div className="about-hero" style={{ margin: 0, padding: 0, position: "relative" }}>
+      <div className="about-hero" style={{ margin: 0, padding: 0, position: "relative" }} 
+  onClick={handleBannerClick}>
         {current.type === "image" ? (
           <img
             src={current.src}
