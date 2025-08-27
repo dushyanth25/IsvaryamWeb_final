@@ -104,7 +104,7 @@ export default function AboutUs() {
 
   useEffect(() => {
     // Background color fetch
-    fetch('http://localhost:5000/api/colors/colorabout')
+    fetch('https://isvaryamweb-final.onrender.com/api/colors/colorabout')
       .then(res => res.json())
       .then(data => {
         if (data.color) setBgColor(data.color);
