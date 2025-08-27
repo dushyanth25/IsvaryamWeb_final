@@ -59,38 +59,38 @@ function App() {
             onClick={toggleChatbot}
             className="chatbot-toggle-button"
             style={{
-              borderRadius: '50%',
-              width: isMobile ? '56px' : '68px',
-              height: isMobile ? '56px' : '68px',
-              background: 'linear-gradient(135deg, #4CAF50, #2E8B57)',
-              color: 'white',
-              border: 'none',
-              fontSize: isMobile ? '22px' : '28px',
-              boxShadow: '0 6px 12px rgba(0, 0, 0, 0.25)',
-              cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
+              gap: '10px',
+              padding: isMobile ? '10px 14px' : '14px 18px',
+              background: 'linear-gradient(135deg, #007bff, #00d4ff)', // Blue gradient
+              color: '#fff',
+              border: 'none',
+              borderRadius: '30px', // Rounded rectangle
+              fontSize: isMobile ? '14px' : '16px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
               transition: 'all 0.3s ease',
-              position: 'relative',
-              animation: 'pulse 1.5s infinite',
+              whiteSpace: 'nowrap',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.1)';
-              e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.35)';
+              e.currentTarget.style.transform = 'translateY(-3px)';
+              e.currentTarget.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.3)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.25)';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
             }}
             title="Chat with us"
           >
+            {/* SVG Icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              style={{ width: '28px', height: '28px' }}
+              style={{ width: '22px', height: '22px' }}
             >
               <path
                 strokeLinecap="round"
@@ -99,6 +99,8 @@ function App() {
                 d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.78 9.78 0 01-4-.8l-4 1 1-3.6A8.992 8.992 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
               />
             </svg>
+            {/* Text - hidden on mobile */}
+            {!isMobile && <span>Chat with us</span>}
           </button>
         </div>
 
@@ -124,7 +126,7 @@ function App() {
             {/* Chatbot Header */}
             <div
               style={{
-                backgroundColor: '#4CAF50',
+                backgroundColor: '#007bff',
                 color: 'white',
                 padding: '12px 16px',
                 fontWeight: 'bold',
@@ -170,17 +172,6 @@ function App() {
           </div>
         )}
       </div>
-
-      {/* CSS for Pulse Animation */}
-      <style>
-        {`
-          @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.6); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(76, 175, 80, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
-          }
-        `}
-      </style>
     </>
   );
 }
