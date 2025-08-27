@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { trackOrderById } from '../../services/orderService';
 import NotFound from '../../components/NotFound/NotFound';
 import classes from './orderTrackPage.module.css';
 import DateTime from '../../components/DateTime/DateTime';
 import OrderItemsList from '../../components/OrderItemsList/OrderItemsList';
 import Map from '../../components/Map/Map';
 import Price from '../../components/Price/Price';
-import { getOrderById } from '../../services/orderService'; // Add this import
+import { getOrderById } from '../../services/orderService';
 
 // Order status steps
 const orderTimeline = (status) => [
@@ -19,59 +18,55 @@ const orderTimeline = (status) => [
 ];
 
 export default function OrderTrackPage() {
-  useEffect(() => {
-  const scrollToTop = () => {
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
-  };
-
-  const timeout = setTimeout(scrollToTop, 100);
-  return () => clearTimeout(timeout);
-}, []);
-
   const { orderId } = useParams();
   const [order, setOrder] = useState(null);
   const [realTotal, setRealTotal] = useState(null);
 
+  // Scroll to top on mount
   useEffect(() => {
-  const fetchOrder = async () => {
-    if (!orderId) return;
+    const timeout = setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 100);
+    return () => clearTimeout(timeout);
+  }, []);
 
-    try {
-      console.log('Fetching order with ID:', orderId);
-      const data = await getOrderById(orderId);
-      console.log('Order data received:', data);
-      console.log('First item product:', data.items[0]?.product);
-      
-      setOrder(data);
+  // Fetch order by ID
+  useEffect(() => {
+    const fetchOrder = async () => {
+      if (!orderId) return;
 
-      // Recalculate real total from product catalog
-      let updatedTotal = 0;
-      for (let item of data.items) {
-        const product = item.product;
-        console.log('Item product:', product);
-        
-        if (product && product.quantities) {
-          const matchedSize = product.quantities.find(q => q.size === item.size);
-          if (matchedSize) {
-            updatedTotal += matchedSize.price * item.quantity;
+      try {
+        const data = await getOrderById(orderId);
+        if (!data) return;
+
+        setOrder(data);
+
+        // Recalculate total based on product catalog
+        let updatedTotal = 0;
+        for (let item of data.items) {
+          const product = item.product;
+          if (product && product.quantities) {
+            const matchedSize = product.quantities.find(q => q.size === item.size);
+            if (matchedSize) {
+              updatedTotal += matchedSize.price * item.quantity;
+            } else {
+              updatedTotal += item.price * item.quantity; // fallback
+            }
           } else {
             updatedTotal += item.price * item.quantity; // fallback
           }
         }
+        setRealTotal(updatedTotal);
+      } catch (error) {
+        console.error('Error fetching order:', error);
       }
+    };
 
-      setRealTotal(updatedTotal);
-    } catch (error) {
-      console.error('Error fetching order:', error);
-    }
-  };
-
-  fetchOrder();
-}, [orderId]);
+    fetchOrder();
+  }, [orderId]);
 
   if (!orderId) return <NotFound message="Order Not Found" linkText="Go To Home Page" linkRoute="/" />;
-  if (!order) return <div></div>;
+  if (!order) return <div>.</div>;
 
   const discount = realTotal !== null ? realTotal - order.totalPrice : 0;
 
@@ -82,9 +77,9 @@ export default function OrderTrackPage() {
       </div>
 
       <div className={classes.content}>
+        {/* Order Details Card */}
         <div className={classes.card}>
           <h2 className={classes.section_title}>Order Details</h2>
-
           <div className={classes.info_grid}>
             <div className={classes.info_group}>
               <span className={classes.info_label}>Order Date</span>
@@ -98,7 +93,10 @@ export default function OrderTrackPage() {
 
             <div className={classes.info_group}>
               <span className={classes.info_label}>Delivery Address</span>
-              <div className={classes.info_value}>{order.address}</div>
+              <div className={classes.info_value}>
+                {order.address?.doorNumber || ''}, {order.address?.street || ''}, {order.address?.area || ''}<br/>
+                {order.address?.district || ''}, {order.address?.state || ''} - {order.address?.pincode || ''}
+              </div>
             </div>
 
             <div className={classes.info_group}>
@@ -140,24 +138,27 @@ export default function OrderTrackPage() {
 
           {order.status === 'NEW' && (
             <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-
-             <Link to={`/payment/${order._id}`} className={classes.payment_button}>
-  Complete Payment
-</Link>
-
-
+              <Link to={`/payment/${order._id}`} className={classes.payment_button}>
+                Complete Payment
+              </Link>
             </div>
           )}
         </div>
 
+        {/* Delivery Location */}
         <div>
           <div className={classes.card}>
             <h2 className={classes.section_title}>Delivery Location</h2>
             <div className={classes.map_container}>
-              <Map location={order.addressLatLng} readonly={true} />
+              {order.addressLatLng ? (
+                <Map location={order.addressLatLng} readonly={true} />
+              ) : (
+                <div>Location not available</div>
+              )}
             </div>
           </div>
 
+          {/* Order Progress */}
           <div className={classes.card}>
             <h2 className={classes.section_title}>Order Progress</h2>
             <div className={classes.timeline}>
