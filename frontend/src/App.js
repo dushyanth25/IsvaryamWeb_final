@@ -30,7 +30,7 @@ function App() {
   }, [showLoading, hideLoading]);
 
   const toggleChatbot = () => {
-    setShowChatbot(prev => !prev);
+    setShowChatbot((prev) => !prev);
   };
 
   return (
@@ -54,62 +54,44 @@ function App() {
         <Footer />
 
         {/* Chatbot Toggle Button */}
-        <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1100 }}>
-          <button
-            onClick={toggleChatbot}
-            className="chatbot-toggle-button"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              padding: isMobile ? '10px 14px' : '14px 18px',
-              background: 'linear-gradient(135deg, #007bff, #00d4ff)', // Blue gradient
-              color: '#fff',
-              border: 'none',
-              borderRadius: '30px', // Rounded rectangle
-              fontSize: isMobile ? '14px' : '16px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-              transition: 'all 0.3s ease',
-              whiteSpace: 'nowrap',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-3px)';
-              e.currentTarget.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.3)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
-            }}
-            title="Chat with us"
-          >
-            {/* SVG Icon */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              style={{ width: '22px', height: '22px' }}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.78 9.78 0 01-4-.8l-4 1 1-3.6A8.992 8.992 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-              />
-            </svg>
-            {/* Text - hidden on mobile */}
-            {!isMobile && <span>Chat with us</span>}
-          </button>
-        </div>
+        <button
+          onClick={toggleChatbot}
+          className="chatbot-toggle-button"
+          style={{
+            position: 'fixed',
+            bottom: '20px',
+            right: '20px',
+            zIndex: 1100,
+            borderRadius: '50%',
+            width: isMobile ? '60px' : '70px',
+            height: isMobile ? '60px' : '70px',
+            backgroundColor: 'transparent',
+            border: 'none',
+            padding: '0',
+            cursor: 'pointer',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+            transition: 'all 0.3s ease',
+            backgroundImage: `url("/chat-icon.png")`, // <-- Add your image here
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.1)';
+            e.currentTarget.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.3)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+          }}
+          title="Chat with us"
+        />
 
         {/* Chatbot Popup */}
         {showChatbot && (
           <div
             style={{
               position: 'fixed',
-              bottom: isMobile ? '70px' : '90px',
+              bottom: isMobile ? '80px' : '90px',
               right: '20px',
               width: isMobile ? '90vw' : '350px',
               height: isMobile ? '75vh' : '500px',
@@ -121,6 +103,7 @@ function App() {
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
+              animation: 'fadeInUp 0.3s ease-out',
             }}
           >
             {/* Chatbot Header */}
