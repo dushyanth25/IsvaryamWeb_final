@@ -14,9 +14,10 @@ function App() {
   const { showLoading, hideLoading } = useLoading();
   const [showChatbot, setShowChatbot] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isHovered, setIsHovered] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === '/';
-  const isAboutus=location.pathname==='/about';
+  const isAboutus = location.pathname === '/about';
 
   useEffect(() => {
     setLoadingInterceptor({ showLoading, hideLoading });
@@ -40,45 +41,96 @@ function App() {
         <Loading />
         <Header />
 
-       <main
-  className="main-content"
-  style={{
-    padding: isHome || isAboutus ? '0' : '20px 0',
-    flex: 1,
-    backgroundColor: isAboutus ? '#f5f5f5' : 'transparent', // match Chatbot bg or your design
-  }}
->
-
+        <main
+          className="main-content"
+          style={{
+            padding: isHome || isAboutus ? '0' : '20px 0',
+            flex: 1,
+            backgroundColor: isAboutus ? '#f5f5f5' : 'transparent',
+          }}
+        >
           <AppRoutes />
         </main>
 
         <Footer />
 
-        {/* Chatbot Toggle Button */}
-        <button
-          onClick={toggleChatbot}
-          className="chatbot-toggle-button"
+        {/* Enhanced Chatbot Toggle Button */}
+        <div
+          className="chatbot-toggle-container"
           style={{
             position: 'fixed',
             bottom: '20px',
             right: '20px',
             zIndex: 1100,
-            borderRadius: '50%',
-            width: isMobile ? '50px' : '60px',
-            height: isMobile ? '50px' : '60px',
-            backgroundColor: '#007bff',
-            color: 'white',
-            border: 'none',
-            fontSize: isMobile ? '22px' : '28px',
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
-            cursor: 'pointer',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
+            flexDirection: 'column',
+            alignItems: 'flex-end',
+            gap: '10px'
           }}
         >
-          💬
-        </button>
+          {isHovered && (
+            <div style={{
+              backgroundColor: 'white',
+              padding: '8px 12px',
+              borderRadius: '12px',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+              fontSize: '14px',
+              fontWeight: '500',
+              color: '#333',
+              animation: 'fadeIn 0.3s ease'
+            }}>
+              Need help? Chat with us!
+            </div>
+          )}
+          
+          <button
+            onClick={toggleChatbot}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className="chatbot-toggle-button"
+            style={{
+              borderRadius: isMobile ? '25px' : '50%',
+              width: isMobile ? '50px' : '60px',
+              height: isMobile ? '50px' : '60px',
+              backgroundColor: showChatbot ? '#4CAF50' : '#007bff',
+              color: 'white',
+              border: 'none',
+              fontSize: isMobile ? '22px' : '24px',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.3s ease',
+              position: 'relative',
+              overflow: 'hidden'
+            }}
+          >
+            {/* Animated chat icon */}
+            <div style={{
+              position: 'relative',
+              transition: 'transform 0.3s ease',
+              transform: isHovered ? 'translateY(-2px)' : 'none'
+            }}>
+              {showChatbot ? '✖' : '💬'}
+            </div>
+            
+            {/* Pulsing animation effect */}
+            {!showChatbot && (
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                borderRadius: '50%',
+                border: '2px solid #007bff',
+                animation: 'pulse 2s infinite',
+                opacity: '0.5'
+              }}></div>
+            )}
+          </button>
+        </div>
 
         {/* Chatbot Popup */}
         {showChatbot && (
@@ -96,7 +148,8 @@ function App() {
               backgroundColor: '#fff',
               overflow: 'hidden',
               display: 'flex',
-              flexDirection: 'column'
+              flexDirection: 'column',
+              animation: 'slideInUp 0.3s ease'
             }}
           >
             {/* Chatbot Header */}
@@ -128,7 +181,7 @@ function App() {
               </button>
             </div>
 
-            {/* Chatbot Iframe - Key changes here */}
+            {/* Chatbot Iframe */}
             <iframe
               src="https://isvarayam-chatbot-1.onrender.com/"
               style={{
@@ -137,15 +190,36 @@ function App() {
                 border: 'none',
                 flex: 1,
                 backgroundColor: '#f5f5f5',
-                overflow: 'hidden' // Prevent double scrollbars
+                overflow: 'hidden'
               }}
-              scrolling="no" // Disable iframe scrollbar
+              scrolling="no"
               allow="microphone; camera"
               title="Chatbot"
             />
           </div>
         )}
       </div>
+
+      {/* Add CSS animations */}
+      <style>
+        {`
+          @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.3; }
+            100% { transform: scale(1); opacity: 0.5; }
+          }
+          
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          
+          @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+        `}
+      </style>
     </>
   );
 }
