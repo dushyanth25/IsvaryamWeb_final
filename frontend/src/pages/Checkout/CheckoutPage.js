@@ -96,7 +96,6 @@ export default function CheckoutPage() {
       }))
     };
 
-    console.log("Order payload:", orderToSend);
 
     try {
       const createdOrder = await createOrder(orderToSend);
