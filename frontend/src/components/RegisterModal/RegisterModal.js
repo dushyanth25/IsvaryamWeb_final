@@ -32,10 +32,38 @@ export default function RegisterModal({ onClose, onSwitchToLogin }) {
     formState: { errors },
   } = useForm();
 
-  const submit = async data => {
-    await auth.register(data);
-  };
-
+// Replace the existing submit function with this:
+const submit = async data => {
+  try {
+    // Ensure email is set correctly (in case OTP verification happened)
+    if (!data.email && otpEmail) {
+      data.email = otpEmail;
+    }
+    
+    const result = await auth.register({
+      ...data,
+      address: {
+        doorNumber: data.doorNumber,
+        street: data.street,
+        area: data.area,
+        district: data.district,
+        state: data.state,
+        pincode: data.pincode
+      }
+    });
+    
+    if (result && result.error) {
+      setOtpMessage(result.error);
+    } else {
+      // Registration successful
+      setOtpMessage('Registration successful!');
+      onClose(); // Close the modal
+    }
+  } catch (error) {
+    console.error('Registration error:', error);
+    setOtpMessage('Registration failed. Please try again.');
+  }
+};
   // Create regex from EMAIL pattern
   const emailRegex = new RegExp(EMAIL);
 
@@ -49,7 +77,7 @@ export default function RegisterModal({ onClose, onSwitchToLogin }) {
     
     try {
       setOtpMessage('Sending OTP...');
-      const res = await fetch('http://localhost:5000/api/users/send-otp', {
+      const res = await fetch('http://localhost:5000/api/otp/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -92,7 +120,7 @@ export default function RegisterModal({ onClose, onSwitchToLogin }) {
     
     try {
       setOtpMessage('Verifying OTP...');
-      const res = await fetch('http://localhost:5000/api/users/verify-otp', {
+      const res = await fetch('http://localhost:5000/api/otp/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: otpEmail, otp }),
@@ -243,9 +271,11 @@ export default function RegisterModal({ onClose, onSwitchToLogin }) {
               className={classes.input}
               disabled={!emailVerified}
             />
-            {errors.name && <p className={classes.error}>Name must be at least 5 characters</p>}
+            {errors.name && (
+              <p className={classes.error}>Name must be at least 5 characters</p>
+            )}
           </div>
-          
+
           <div className={classes.field}>
             <label>Phone Number</label>
             <input
@@ -275,7 +305,9 @@ export default function RegisterModal({ onClose, onSwitchToLogin }) {
               />
               <i className="fa fa-eye" id="eye-icon"></i>
             </div>
-            {errors.password && <p className={classes.error}>Password must be at least 5 characters</p>}
+            {errors.password && (
+              <p className={classes.error}>Password must be at least 5 characters</p>
+            )}
           </div>
 
           <div className={classes.field}>
@@ -299,28 +331,80 @@ export default function RegisterModal({ onClose, onSwitchToLogin }) {
             )}
           </div>
 
+          {/* Address fields */}
           <div className={classes.field}>
-            <label>Address</label>
+            <label>Door Number</label>
             <input
               type="text"
-              {...register('address', { required: true, minLength: 10 })}
-                className={`${classes.input} ${classes.addressInput}`}
-                disabled={!emailVerified}
+              {...register('doorNumber', { required: true })}
+              className={classes.input}
+              disabled={!emailVerified}
             />
-            {errors.address && <p className={classes.error}>Address must be at least 10 characters</p>}
+            {errors.doorNumber && <p className={classes.error}>Door Number is required</p>}
           </div>
 
-          <Button 
-            type="submit" 
-            text="Register" 
-            disabled={!emailVerified}
-          />
+          <div className={classes.field}>
+            <label>Street</label>
+            <input
+              type="text"
+              {...register('street', { required: true })}
+              className={classes.input}
+              disabled={!emailVerified}
+            />
+            {errors.street && <p className={classes.error}>Street is required</p>}
+          </div>
+
+          <div className={classes.field}>
+            <label>Area</label>
+            <input
+              type="text"
+              {...register('area', { required: true })}
+              className={classes.input}
+              disabled={!emailVerified}
+            />
+            {errors.area && <p className={classes.error}>Area is required</p>}
+          </div>
+
+          <div className={classes.field}>
+            <label>District</label>
+            <input
+              type="text"
+              {...register('district', { required: true })}
+              className={classes.input}
+              disabled={!emailVerified}
+            />
+            {errors.district && <p className={classes.error}>District is required</p>}
+          </div>
+
+          <div className={classes.field}>
+            <label>State</label>
+            <input
+              type="text"
+              {...register('state', { required: true })}
+              className={classes.input}
+              disabled={!emailVerified}
+            />
+            {errors.state && <p className={classes.error}>State is required</p>}
+          </div>
+
+          <div className={classes.field}>
+            <label>Pincode</label>
+            <input
+              type="text"
+              {...register('pincode', { required: true })}
+              className={classes.input}
+              disabled={!emailVerified}
+            />
+            {errors.pincode && <p className={classes.error}>Pincode is required</p>}
+          </div>
+
+          <Button type="submit" text="Register" disabled={!emailVerified} />
 
           <div className={classes.switch}>
             Already a user?&nbsp;
             <button 
               type="button" 
-              className={classes.switchButton}
+              className={classes.switchButton} 
               onClick={onSwitchToLogin}
             >
               Login here
