@@ -19,7 +19,7 @@ import couponRouter from './routers/coupon.router.js';
 import recipeRouter from './routers/recipe.router.js';
 import forgetRouter from './routers/forget.router.js';
 import otpRoute from './routers/auth.router.js';
-import mailRoute from './routers/mail.router.js';
+import mailRoute from './routers/contact.router.js';
 
 import imageRouter from './routers/image.router.js';
 import colorRouter from './routers/color.router.js';
