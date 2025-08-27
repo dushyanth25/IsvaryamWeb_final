@@ -6,26 +6,15 @@ import {
   removeFromWishlist,
 } from '../services/wishlistService';
 
-// Custom hook for wishlist
+// In usewishlist.js
 export function useWishlist() {
-  const { user } = useAuth(); // current logged-in user
+  const { user } = useAuth();
   const [wishlist, setWishlist] = useState([]);
 
-  // Fetch wishlist items from backend
   const refreshWishlist = async () => {
-    if (!user) {
-      setWishlist([]); // clear wishlist if not logged in
-      return;
-    }
-    try {
+    if (user) {
       const data = await fetchWishlist();
       setWishlist(data);
-    } catch (err) {
-      if (err.response?.status === 401) {
-        alert('Session expired. Please log in again!');
-      } else {
-        console.error('Failed to fetch wishlist:', err);
-      }
     }
   };
 
@@ -34,35 +23,20 @@ export function useWishlist() {
     // eslint-disable-next-line
   }, [user]);
 
-  // Toggle wishlist for a product
   const toggleWishlist = async (product) => {
-    if (!user) {
-      alert('Please log in first to use the wishlist!');
-      return;
-    }
-
+    if (!user) return;
     const exists = wishlist.find(i => i._id === product._id);
-    try {
-      if (exists) {
-        await removeFromWishlist(product._id);
-      } else {
-        await addToWishlist(product._id);
-      }
-      await refreshWishlist(); // refresh after toggle
-    } catch (err) {
-      if (err.response?.status === 401) {
-        alert('Session expired. Please log in again!');
-      } else {
-        console.error('Wishlist action failed:', err);
-      }
+    if (exists) {
+      await removeFromWishlist(product._id);
+    } else {
+      await addToWishlist(product._id);
     }
+    await refreshWishlist(); // <-- force re-fetch after toggle
   };
 
-  // Check if a product is in wishlist
   const isInWishlist = (productId) => {
     return wishlist.some(item => item._id === productId);
   };
 
   return { wishlist, toggleWishlist, isInWishlist };
 }
-
