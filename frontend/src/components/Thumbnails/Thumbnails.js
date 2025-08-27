@@ -7,11 +7,12 @@ import { useWishlist } from '../../hooks/usewishlist';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import classes from './thumbnails.module.css';
 import axios from 'axios';
-
+import { useAuth } from '../../hooks/useAuth';
 export default function Thumbnails({ foods }) {
   const { addToCart } = useCart();
   const { wishlist, toggleWishlist, isInWishlist } = useWishlist();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [selectedSizes, setSelectedSizes] = useState({});
   const [dialog, setDialog] = useState({ open: false, message: '' });
@@ -46,11 +47,17 @@ export default function Thumbnails({ foods }) {
   };
 
   const handleAddToCart = (food, e) => {
-    e.stopPropagation();
-    const size = selectedSizes[food._id] || food.quantities[0].size;
-    addToCart(food, size);
-    navigate('/cart');
-  };
+  e.stopPropagation();
+
+  if (!user) {
+    alert('Please log in first to add items to the cart!');
+    return; // stop navigation and adding to cart
+  }
+
+  const size = selectedSizes[food._id] || food.quantities[0].size;
+  addToCart(food, size);
+  navigate('/cart');
+};
 
   const handleBuyNow = (food, e) => {
     e.stopPropagation();
