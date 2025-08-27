@@ -33,7 +33,7 @@ export default function ProductPage() {
   const fetchData = useCallback(async () => {
     try {
       const [bgRes, products] = await Promise.all([
-        axios.get('http://localhost:5000/api/colors/colorproduct'),
+        axios.get('https://isvaryamweb-final.onrender.com/api/colors/colorproduct'),
         getAll(),
       ]);
 
