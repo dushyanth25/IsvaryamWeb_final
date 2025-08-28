@@ -16,7 +16,6 @@ import CategorySection from '../../components/Category/category'; // ad
 import CountdownBanner from '../../components/CountdownBanner/CountdownBanner';
 
 import TestimonialSlider from '../../components/Testimonials/TestimonialSlider';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import RecipeDetails from '../../components/RecipeDetails/RecipeDetails';
 
 const initialState = {
@@ -25,14 +24,7 @@ const initialState = {
   loading: true,
   error: null,
 };
-  const backgrounds = [
-    
-   
-    {
-      type: "video",
-      src: "https://res.cloudinary.com/dbmhum57n/video/upload/v1756129589/h7ipxdjo6xvougrkgo5l.mp4",
-    },
-  ];
+  
 const promises = [
   {
    icon:<img src="/pure.webp" alt="Purity Icon" style={{ width: '150px', height: '140px', borderRadius: '12px', objectFit: 'cover' }} />,
