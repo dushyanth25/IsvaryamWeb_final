@@ -225,7 +225,7 @@ export default function AboutUs() {
             </div>
           </div>
           <div className="intro-image">
-            <img src="/oil bg.jpg" alt="Organic farm" />
+            <img src="/oil bg.webp" alt="Organic farm" />
           </div>
         </div>
 
