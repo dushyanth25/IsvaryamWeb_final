@@ -63,14 +63,20 @@ router.post(
   })
 );
 
-
+// ===== Verify OTP Endpoint =====
 router.post(
   '/verify-otp',
   handler(async (req, res) => {
-    const { email, name, password, address, phone, otp } = req.body;
+    const { email, otp } = req.body;
 
     if (!email || !otp) {
       return res.status(400).json({ error: 'Email and OTP are required' });
+    }
+
+    // ✅ Check if user already exists in DB
+    const existingUser = await UserModel.findOne({ email: email.toLowerCase() });
+    if (existingUser) {
+      return res.status(400).json({ error: 'User already exists, please login!' });
     }
 
     const record = otpStore.get(email);
@@ -78,32 +84,24 @@ router.post(
       return res.status(400).json({ error: 'No OTP found for this email' });
     }
 
-    if (Date.now() > record.expiresAt) {
+    const { otp: storedOtp, expiresAt } = record;
+
+    if (Date.now() > expiresAt) {
       otpStore.delete(email);
       return res.status(400).json({ error: 'OTP has expired' });
     }
 
-    if (record.otp !== otp) {
+    if (storedOtp !== otp) {
       return res.status(400).json({ error: 'Invalid OTP' });
     }
 
-    // ✅ Check if user already exists in DB
-    let user = await UserModel.findOne({ email: email.toLowerCase() });
-    if (!user) {
-      user = await UserModel.create({
-        email: email.toLowerCase()
-        // hashed if needed
-        
-      });
-    }
+    otpStore.delete(email);
+    verifiedUsers.add(email);
 
-    otpStore.delete(email);        // Remove OTP after verification
-    verifiedUsers.add(email);      // Optional: mark as verified
-
-    res.json({ message: 'OTP verified and user created successfully', user });
+    console.log(`OTP verified for ${email}`);
+    res.json({ message: 'OTP verified successfully', verified: true });
   })
 );
-
 
 export default router;
 export { verifiedUsers };
