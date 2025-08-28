@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { getById, register, updateUser } from '../../services/userService';
-import { useParams } from 'react-router-dom';
 import classes from './userEdit.module.css';
 import Title from '../../components/Title/Title';
 import Input from '../../components/Input/Input';
@@ -30,8 +29,11 @@ export default function UserEditPage() {
   const isEditMode = userId;
 
   useEffect(() => {
-    if (isEditMode) loadUser();
-  }, [userId]);
+  if (isEditMode) {
+    loadUser(); 
+  }
+}, [isEditMode, loadUser]); // ✅ all dependencies included
+
 
   const loadUser = async () => {
     const user = await getById(userId);
