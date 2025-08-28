@@ -20,32 +20,30 @@ import recipeRouter from './routers/recipe.router.js';
 import forgetRouter from './routers/forget.router.js';
 import otpRoute from './routers/auth.router.js';
 import mailRoute from './routers/contact.router.js';
-
 import imageRouter from './routers/image.router.js';
 import colorRouter from './routers/color.router.js';
-
 
 import './models/user.model.js';
 import './models/food.model.js';
 import './models/order.model.js';
 
-// Connect to DB
+// ✅ Connect to DB
 dbconnect();
 
-// Setup __dirname for ES module
+// ✅ Setup __dirname for ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Initialize Express app
+// ✅ Initialize Express app
 const app = express();
 
-// ✅ Use single origin: backend domain (local or prod)
+// ✅ CORS Setup
 const allowedOrigins = [
-  'http://localhost:5000',   // local single-domain
+  'http://localhost:5000',
   'https://isvaryam.com',
   'https://isvaryam-admin.onrender.com',
   'https://isvaryam-web-final-otvv.vercel.app',
-  'https://isvaryamweb-final.onrender.com'// production
+  'https://isvaryamweb-final.onrender.com'
 ];
 
 app.use((req, res, next) => {
@@ -61,7 +59,7 @@ app.use((req, res, next) => {
 });
 
 app.use(cors({
-  origin: function (origin, callback) {
+  origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -74,6 +72,7 @@ app.use(cors({
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
 
+// ✅ API Routes
 app.use('/api/reviews', reviewRouter);
 app.use('/api/foods', foodRouter);
 app.use('/api/otp', otpRoute);
@@ -83,15 +82,14 @@ app.use('/api/users', userRouter);
 app.use('/api/orders', orderRouter);
 app.use('/api/upload', uploadRouter);
 app.use('/api/whishlist', whishlistRouter);
-
 app.use('/api/im', imageRouter);
 app.use('/api/analytics', analyticsRouter);
-
 app.use('/api/cart', cartRouter);
 app.use('/api/recipes', recipeRouter);
 app.use('/api/coupons', couponRouter);
 app.use('/api/colors', colorRouter);
-// ================== Serve React Frontend (local + prod) ==================
+
+// ✅ Serve React build (works for Render + local)
 const frontendPath = path.join(__dirname, '../../frontend/build');
 app.use(express.static(frontendPath));
 
@@ -99,12 +97,13 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
-// Debug
-console.log('Mongo URI:', process.env.MONGO_URI);
+// ✅ Export for Vercel (serverless)
+export default app;
 
+// ✅ Local Dev / Render only
 if (!process.env.VERCEL) {
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);
   });
-
+}
