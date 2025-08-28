@@ -15,7 +15,7 @@ const testimonials = [
   {
     name: 'Jeba Julians J',
     rating: 5,
-    text: 'Recently bought 11 items from gramiyum. Both sesame and groundnut oil was good...'
+    text: 'Recently bought 11 items from Isvaryam. Both sesame and groundnut oil was good...'
   },
   {
     name: 'Karthic R',
