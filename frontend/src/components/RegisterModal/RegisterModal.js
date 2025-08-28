@@ -77,7 +77,7 @@ const submit = async data => {
     
     try {
       setOtpMessage('Sending OTP...');
-      const res = await fetch('http://localhost:5000/api/otp/send-otp', {
+      const res = await fetch('https://isvaryamweb-final.onrender.com/api/otp/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -120,7 +120,7 @@ const submit = async data => {
     
     try {
       setOtpMessage('Verifying OTP...');
-      const res = await fetch('http://localhost:5000/api/otp/verify-otp', {
+      const res = await fetch('https://isvaryamweb-final.onrender.com/api/otp/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: otpEmail, otp }),
