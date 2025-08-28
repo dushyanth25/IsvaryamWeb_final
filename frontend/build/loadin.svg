@@ -1,0 +1,27 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Pot body -->
+  <rect x="40" y="80" width="120" height="80" rx="10" ry="10" fill="#000" />
+  
+  <!-- Pot lid -->
+  <path d="M30 80 Q100 30 170 80" fill="none" stroke="#000" stroke-width="10" />
+  <rect x="90" y="40" width="20" height="20" rx="3" ry="3" fill="#000" />
+
+  <!-- Steam animation -->
+  <g>
+    <circle cx="80" cy="60" r="5" fill="#ccc">
+      <animate attributeName="cy" values="60;30" dur="1s" repeatCount="5s" />
+      <animate attributeName="opacity" values="1;0" dur="1s" repeatCount="5s" />
+    </circle>
+    <circle cx="100" cy="60" r="5" fill="#ccc">
+      <animate attributeName="cy" values="60;30" begin="0.2s" dur="1s" repeatCount="5s" />
+      <animate attributeName="opacity" values="1;0" begin="0.2s" dur="1s" repeatCount="5s" />
+    </circle>
+    <circle cx="120" cy="60" r="5" fill="#ccc">
+      <animate attributeName="cy" values="60;30" begin="0.4s" dur="1s" repeatCount="5s" />
+      <animate attributeName="opacity" values="1;0" begin="0.4s" dur="1s" repeatCount="5s" />
+    </circle>
+  </g>
+  
+  <!-- Optional: label -->
+  <text x="100" y="180" font-size="14" text-anchor="middle" fill="#444">Cooking...</text>
+</svg>
