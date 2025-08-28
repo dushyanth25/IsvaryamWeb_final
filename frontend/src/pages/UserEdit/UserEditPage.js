@@ -6,6 +6,7 @@ import Title from '../../components/Title/Title';
 import Input from '../../components/Input/Input';
 import { EMAIL } from '../../constants/patterns';
 import Button from '../../components/Button/Button';
+import { useParams } from 'react-router-dom';
 
 export default function UserEditPage() {
   useEffect(() => {
