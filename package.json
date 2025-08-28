@@ -5,17 +5,7 @@
     "start": "node backend/src/server.js",
     "build": "cd frontend && npm install && npm run build",
     "dev": "nodemon backend/src/server.js"
-  },"eslintConfig": {
-  "extends": [
-    "react-app",
-    "react-app/jest"
-  ],
-  "rules": {
-    "no-unused-vars": "off",
-    "no-use-before-define": "off",
-    "react-hooks/exhaustive-deps": "off"
   }
-}
 ,
   "dependencies": {
     "bcryptjs": "^2.4.3",
