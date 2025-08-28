@@ -36,7 +36,6 @@ export default function ProfilePage() {
   const { user, updateProfile, logout } = useAuth();
   const navigate = useNavigate();
   const [showEditDialog, setShowEditDialog] = useState(false);
-  const [activeTab, setActiveTab] = useState('profile');
   const { wishlist, toggleWishlist } = useWishlist();
 
   const [showChangePassword, setShowChangePassword] = useState(false);
