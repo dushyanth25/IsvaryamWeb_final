@@ -18,7 +18,6 @@ export default function UserEditPage() {
   const timeout = setTimeout(scrollToTop, 100);
   return () => clearTimeout(timeout);
 }, []);
-const { userId } = useParams();
 
   const {
     register,
