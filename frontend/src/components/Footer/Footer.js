@@ -41,7 +41,7 @@ function Footer() {
 
           <div className="footer-section">
             <h3>Contact</h3>
-            <p>Email: info@isvaryam.com</p>
+            <p>Email: isvaryam@hotmail.com</p>
             <p>Phone: +91 95788 22000</p>
             <div className="social-icons">
               <a href="https://www.instagram.com/isvaryamofficial" target="_blank" rel="noopener noreferrer">
