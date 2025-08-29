@@ -25,6 +25,11 @@ router.use(auth);
 // Store's state (set this to your actual store state)
 const STORE_STATE = 'Tamil Nadu'; // Change as needed
 
+// ✅ Route to send Razorpay Key (important!)
+router.get("/razorpay/get-key", (req, res) => {
+  res.json({ key: process.env.RAZORPAY_KEY_ID });
+});
+
 // ✅ Create Order in DB
 router.post(
   '/create',
@@ -181,8 +186,7 @@ router.post(
   })
 );
 
-// In order.router.js - Fix the track order route
-// In order.router.js - Fix the track order route
+// ✅ Track Order
 router.get(
   '/track/:orderId',
   handler(async (req, res) => {
@@ -198,6 +202,7 @@ router.get(
     return res.send(order);
   })
 );
+
 // ✅ Delete Order
 router.delete('/:id', async (req, res) => {
   try {
@@ -212,7 +217,6 @@ router.delete('/:id', async (req, res) => {
 });
 
 // ✅ Get New Order for Current User
-// In order.router.js - Fix the newOrderForCurrentUser route
 router.get('/newOrderForCurrentUser', auth, async (req, res) => {
   try {
     const order = await OrderModel.findOne({
@@ -241,7 +245,6 @@ router.get('/allstatus', (req, res) => {
 });
 
 // ✅ Get Orders by Status
-// In order.router.js - Fix the getAll route
 router.get(
   '/:status?',
   handler(async (req, res) => {
@@ -254,7 +257,7 @@ router.get(
 
     const orders = await OrderModel.find(filter)
       .populate({
-        path: 'items.product',  // Add this populate
+        path: 'items.product',  
         select: 'name images quantities'
       })
       .sort('-createdAt');
