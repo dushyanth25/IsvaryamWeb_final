@@ -164,7 +164,7 @@ function RazorpayGateway({ order }) {
 
     // Create order data for Razorpay
     const options = {
-      key: 'rzp_test_9SiLlGXPcCjPhi',
+      key: process.env.RAZORPAY_KEY_ID,
       amount: order.totalPrice * 100, // Razorpay expects amount in paise (so *100)
       currency: 'INR',
       name: 'Isvaryam',
