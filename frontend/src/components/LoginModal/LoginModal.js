@@ -71,7 +71,7 @@ export default function LoginModal({ onClose, onSwitchToRegister }) {
 
     try {
       setForgotMessage({ text: 'Sending OTP...', isError: false });
-      const res = await fetch('http://localhost:5000/api/forget/forget-send-otp', {
+      const res = await fetch('https://demo.isvaryam.com/api/forget/forget-send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },  
         body: JSON.stringify({ email: forgotEmail }),
