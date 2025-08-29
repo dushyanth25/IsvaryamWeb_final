@@ -99,7 +99,7 @@ export default function LoginModal({ onClose, onSwitchToRegister }) {
 
     try {
       setForgotMessage({ text: 'Verifying OTP...', isError: false });
-      const res = await fetch('http://localhost:5000/api/forget/forget-verify-otp', {
+      const res = await fetch('https://demo.isvaryam.com/api/forget/forget-verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: forgotEmail, otp }),
@@ -126,7 +126,7 @@ export default function LoginModal({ onClose, onSwitchToRegister }) {
     }
     try {
       setForgotMessage({ text: 'Resetting password...', isError: false });
-      const res = await fetch('http://localhost:5000/api/forget/forget-reset-password', {
+      const res = await fetch('https://demo.isvaryam.com/api/forget/forget-reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: forgotEmail, password: newPassword }),
