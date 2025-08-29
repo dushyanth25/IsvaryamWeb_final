@@ -42,6 +42,7 @@ const allowedOrigins = [
   'http://localhost:5000',
   'https://isvaryam.com',
   'https://isvaryam-admin.onrender.com',
+  'https://demo.isvaryam.com',
   'https://isvaryam-web-final-otvv.vercel.app',
   'https://isvaryamweb-final.onrender.com'
 ];
