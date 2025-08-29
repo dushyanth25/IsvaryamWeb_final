@@ -163,40 +163,54 @@ function RazorpayGateway({ order }) {
     }
 
     // Create order data for Razorpay
-    const options = {
-      key: process.env.RAZORPAY_KEY_ID,
-      amount: order.totalPrice * 100, // Razorpay expects amount in paise (so *100)
-      currency: 'INR',
-      name: 'Isvaryam',
-      description: `Order #${order._id}`,
-      image: '/logo.png', // Your company logo
-      handler: async function (response) {
-        // Payment successful
-        try {
-          const orderId = await pay(response.razorpay_payment_id, 'razorpay');
-          clearCart();
-          toast.success('Payment Saved Successfully');
-          navigate('/track/' + orderId);
-        } catch (error) {
-          toast.error('Payment Save Failed');
-          console.error(error);
-        } finally {
-          hideLoading();
-        }
-      },
-      prefill: {
-        name: order.name,
-        email: order.email,
-        contact: order.phone
-      },
-      notes: {
-        address: order.address,
-        order_id: order._id
-      },
-      theme: {
-        color: '#3399cc'
+  const options = {
+  key: process.env.REACT_APP_RAZORPAY_KEY_ID, // ✅ fix
+  amount: order.totalPrice * 100,
+  currency: 'INR',
+  name: 'Isvaryam',
+  description: `Order #${order._id}`,
+  image: '/logo.png',
+  handler: async function (response) {
+    try {
+      // ✅ Verify payment with backend
+      const verifyRes = await fetch('/api/orders/razorpay/verify-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`, // if using JWT
+        },
+        body: JSON.stringify(response), // { razorpay_payment_id, razorpay_order_id, razorpay_signature }
+      });
+
+      const result = await verifyRes.json();
+      if (result.success) {
+        clearCart();
+        toast.success('Payment Saved Successfully');
+        navigate('/track/' + result.orderId);
+      } else {
+        toast.error('Payment verification failed');
       }
-    };
+    } catch (error) {
+      toast.error('Payment Save Failed');
+      console.error(error);
+    } finally {
+      hideLoading();
+    }
+  },
+  prefill: {
+    name: order.name,
+    email: order.email,
+    contact: order.phone,
+  },
+  notes: {
+    address: order.address,
+    order_id: order._id,
+  },
+  theme: {
+    color: '#3399cc',
+  },
+};
+
 
     try {
       const paymentObject = new window.Razorpay(options);
