@@ -294,7 +294,7 @@ const handleBannerClick = () => {
 
         {/* Overlay */}
         <div className="hero-overlay" style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
-          <h1 style={{ fontFamily: "Arial Black, Arial, sans-serif" }}>𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕋𝕠 𝕀𝕤𝕧𝕒𝕣𝕪𝕒𝕞</h1>
+          <h1 style={{ fontFamily: "Arial Black, Arial, sans-serif" }}>Welcome To Isvaryam</h1>
           <p style={{ fontFamily: "Arial Black, Arial, sans-serif" }}>HEALTHY HEART BETTER LIFE</p>
         </div>
 
