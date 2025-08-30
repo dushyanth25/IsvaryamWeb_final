@@ -171,7 +171,7 @@ function RazorpayGateway({ order }) {
       console.log("🔑 Token being sent:", token);
 
       // ✅ Step 1: Ask backend to create Razorpay Order
-      const createOrderRes = await fetch("/api/orders/razorpay/create-order", {
+      const createOrderRes = await fetch("https://demo.isvaryam.com/api/orders/razorpay/create-order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
