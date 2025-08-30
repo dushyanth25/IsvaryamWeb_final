@@ -42,7 +42,7 @@ export default function AboutUs() {
       setIsSending(true); // 🔒 Disable button
   
       try {
-        const res = await fetch('https://isvaryamweb-final.onrender.com/api/contact/send-contact-email', {
+        const res = await fetch('https://demo.isvaryam.com/api/contact/send-contact-email', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
