@@ -18,17 +18,13 @@ export default function PaymentButtons({ order }) {
     <div className="payment-gateway-container">
       <div className="gateway-selector">
         <button
-          className={`gateway-tab ${
-            activeGateway === "paypal" ? "active" : ""
-          }`}
+          className={`gateway-tab ${activeGateway === "paypal" ? "active" : ""}`}
           onClick={() => setActiveGateway("paypal")}
         >
           PayPal
         </button>
         <button
-          className={`gateway-tab ${
-            activeGateway === "razorpay" ? "active" : ""
-          }`}
+          className={`gateway-tab ${activeGateway === "razorpay" ? "active" : ""}`}
           onClick={() => setActiveGateway("razorpay")}
         >
           Razorpay
@@ -114,7 +110,26 @@ function PaypalButtons({ order, usdPrice }) {
   const onApprove = async (data, actions) => {
     try {
       const payment = await actions.order.capture();
-      const orderId = await pay(payment.id, "paypal");
+
+      // 🔑 Get user token
+      let user = null;
+      try {
+        user = JSON.parse(localStorage.getItem("user"));
+      } catch (err) {
+        console.error("❌ Failed to parse user from localStorage:", err);
+      }
+
+      if (!user?.token) {
+        toast.error("Please log in to complete payment");
+        navigate("/login");
+        return;
+      }
+
+      const token = user.token.trim();
+      console.log("🔑 Using token for PayPal save:", token);
+
+      // Save payment to backend
+      const orderId = await pay(payment.id, "paypal", token);
       clearCart();
       toast.success("Payment Saved Successfully");
       navigate("/track/" + orderId);
@@ -140,7 +155,7 @@ function PaypalButtons({ order, usdPrice }) {
 }
 
 /* ==============================
-   RAZORPAY GATEWAY (Clean)
+   RAZORPAY GATEWAY (with Token)
 ================================= */
 function RazorpayGateway({ order }) {
   const { clearCart } = useCart();
@@ -163,7 +178,13 @@ function RazorpayGateway({ order }) {
 
     try {
       // Get user token
-      const user = JSON.parse(localStorage.getItem("user"));
+      let user = null;
+      try {
+        user = JSON.parse(localStorage.getItem("user"));
+      } catch (err) {
+        console.error("❌ Failed to parse user from localStorage:", err);
+      }
+
       if (!user?.token) {
         hideLoading();
         toast.error("Please login to continue payment");
@@ -188,6 +209,7 @@ function RazorpayGateway({ order }) {
       );
 
       if (createOrderRes.status === 401) {
+        localStorage.removeItem("user"); // clear stale token
         hideLoading();
         toast.error("Unauthorized. Please login again.");
         navigate("/login");
@@ -242,7 +264,7 @@ function RazorpayGateway({ order }) {
             const result = await verifyRes.json();
 
             if (result.success) {
-              await pay(result.paymentId); // save payment
+              await pay(result.paymentId, "razorpay", token); // save payment
               clearCart();
               toast.success("Payment Successful");
               navigate("/track/" + result.orderId);
