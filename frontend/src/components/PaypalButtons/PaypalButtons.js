@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { pay } from "../../services/orderService";
 
-export default function PaymentButtons({ order }) {
+export default function PaypalButtons({ order }) {
   const [activeGateway, setActiveGateway] = useState("paypal");
   const [usdPrice, setUsdPrice] = useState(null);
 
