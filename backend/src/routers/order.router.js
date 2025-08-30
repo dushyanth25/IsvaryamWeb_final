@@ -25,8 +25,8 @@ router.use(auth);
 // Store's state (set this to your actual store state)
 const STORE_STATE = 'Tamil Nadu'; // Change as needed
 
-// ✅ Route to send Razorpay Key (important!)
-router.get("/razorpay/get-key", (req, res) => {
+// ✅ Send Razorpay Key to Frontend
+router.get('/razorpay/get-key', (req, res) => {
   res.json({ key: process.env.RAZORPAY_KEY_ID });
 });
 
@@ -41,7 +41,6 @@ router.post(
       return res.status(400).send('Address, state, and pincode are required');
     }
 
-    // Validate totalPrice
     if (isNaN(order.totalPrice)) {
       return res.status(400).send('Invalid total price');
     }
@@ -57,9 +56,8 @@ router.post(
     if (normalizedCustomerState && normalizedCustomerState !== normalizedStoreState) {
       const chargeDoc = await DeliveryChargeModel.findOne({
         fromState: STORE_STATE,
-        toState: { $regex: `^${normalizedCustomerState}$`, $options: 'i' }
+        toState: { $regex: `^${normalizedCustomerState}$`, $options: 'i' },
       });
-      console.log('ChargeDoc:', chargeDoc);
       deliveryCharge = chargeDoc ? chargeDoc.charge : 200;
     } else if (normalizedCustomerState === normalizedStoreState) {
       deliveryCharge = 0;
@@ -67,7 +65,6 @@ router.post(
       deliveryCharge = 200;
     }
 
-    // ✅ persist deliveryCharge and recalc totalPrice
     order.deliveryCharge = deliveryCharge;
     order.totalPrice = order.totalPrice + deliveryCharge;
     order.user = req.user.id;
@@ -84,18 +81,15 @@ router.post(
   handler(async (req, res) => {
     try {
       const order = await getNewOrderForCurrentUser(req);
-      if (!order) {
-        return res.status(BAD_REQUEST).json({ error: 'Order Not Found!' });
-      }
+      if (!order) return res.status(BAD_REQUEST).json({ error: 'Order Not Found!' });
 
-      // Ensure amount is in paise
       const amountInPaise = Math.round(order.totalPrice * 100);
 
       const options = {
         amount: amountInPaise,
         currency: 'INR',
         receipt: `order_rcptid_${order._id}`,
-        payment_capture: 1 // Auto capture payment
+        payment_capture: 1,
       };
 
       const razorpayOrder = await razorpay.orders.create(options);
@@ -105,15 +99,11 @@ router.post(
         orderId: razorpayOrder.id,
         amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
-        receipt: razorpayOrder.receipt
+        receipt: razorpayOrder.receipt,
       });
-
     } catch (err) {
       console.error('❌ Razorpay Create Order Error:', err);
-      res.status(500).json({
-        error: 'Failed to create Razorpay order',
-        message: err.message
-      });
+      res.status(500).json({ error: 'Failed to create Razorpay order', message: err.message });
     }
   })
 );
@@ -124,64 +114,88 @@ router.post(
   handler(async (req, res) => {
     try {
       const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
-
       if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-        return res.status(BAD_REQUEST).json({ error: 'Missing required payment verification fields' });
+        return res.status(BAD_REQUEST).json({ error: 'Missing required fields' });
       }
 
-      // Generate expected signature
       const body = razorpay_order_id + '|' + razorpay_payment_id;
       const expectedSignature = crypto
         .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
         .update(body.toString())
         .digest('hex');
 
-      console.log('🔍 Signature Check:', {
-        expected: expectedSignature,
-        received: razorpay_signature
-      });
-
       if (expectedSignature !== razorpay_signature) {
         return res.status(BAD_REQUEST).json({ error: 'Invalid Signature!' });
       }
 
       const order = await getNewOrderForCurrentUser(req);
-      if (!order) {
-        return res.status(BAD_REQUEST).json({ error: 'Order Not Found!' });
-      }
+      if (!order) return res.status(BAD_REQUEST).json({ error: 'Order Not Found!' });
 
-      // Save payment details
       const payment = new PaymentModel({
         order: order._id,
         user: req.user.id,
         paymentId: razorpay_payment_id,
         method: 'Razorpay',
         amount: order.totalPrice,
-        status: 'COMPLETED'
+        status: 'COMPLETED',
       });
       await payment.save();
 
-      // Update order status
       order.paymentId = razorpay_payment_id;
       order.status = OrderStatus.PAYED;
       await order.save();
 
-      // Send email receipt
       sendEmailReceipt(order);
 
       res.json({
         success: true,
         orderId: order._id,
         paymentId: payment._id,
-        paymentStatus: 'COMPLETED'
+        paymentStatus: 'COMPLETED',
       });
-
     } catch (err) {
       console.error('❌ Razorpay Verify Payment Error:', err);
-      res.status(500).json({
-        error: 'Failed to verify Razorpay payment',
-        message: err.message
+      res.status(500).json({ error: 'Failed to verify Razorpay payment', message: err.message });
+    }
+  })
+);
+
+// ✅ Verify PayPal Payment
+router.post(
+  '/paypal/verify-payment',
+  handler(async (req, res) => {
+    try {
+      const { paymentId } = req.body;
+      if (!paymentId) return res.status(BAD_REQUEST).json({ error: 'Missing PayPal paymentId' });
+
+      const order = await getNewOrderForCurrentUser(req);
+      if (!order) return res.status(BAD_REQUEST).json({ error: 'Order Not Found!' });
+
+      const payment = new PaymentModel({
+        order: order._id,
+        user: req.user.id,
+        paymentId,
+        method: 'PayPal',
+        amount: order.totalPrice,
+        status: 'COMPLETED',
       });
+      await payment.save();
+
+      order.paymentId = paymentId;
+      order.status = OrderStatus.PAYED;
+      await order.save();
+
+      sendEmailReceipt(order);
+
+      res.json({
+        success: true,
+        orderId: order._id,
+        paymentId: payment._id,
+        paymentStatus: 'COMPLETED',
+      });
+    } catch (err) {
+      console.error('❌ PayPal Verify Error:', err);
+      res.status(500).json({ error: 'Failed to verify PayPal payment', message: err.message });
     }
   })
 );
@@ -192,13 +206,11 @@ router.get(
   handler(async (req, res) => {
     const { orderId } = req.params;
     const user = await UserModel.findById(req.user.id);
-
     const filter = { _id: orderId };
     if (!user.isAdmin) filter.user = user._id;
 
     const order = await OrderModel.findOne(filter).populate('items.product');
     if (!order) return res.send(UNAUTHORIZED);
-
     return res.send(order);
   })
 );
@@ -207,9 +219,7 @@ router.get(
 router.delete('/:id', async (req, res) => {
   try {
     const deletedOrder = await OrderModel.findByIdAndDelete(req.params.id);
-    if (!deletedOrder) {
-      return res.status(404).json({ message: 'Order not found' });
-    }
+    if (!deletedOrder) return res.status(404).json({ message: 'Order not found' });
     res.json({ message: 'Order deleted successfully' });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
@@ -221,27 +231,21 @@ router.get('/newOrderForCurrentUser', auth, async (req, res) => {
   try {
     const order = await OrderModel.findOne({
       user: req.user.id,
-      status: OrderStatus.NEW,
+    status: OrderStatus.NEW,
     })
       .populate('user')
-      .populate({
-        path: 'items.product',
-        select: 'name images quantities',
-      });
+      .populate({ path: 'items.product', select: 'name images quantities' });
 
     if (!order) return res.status(404).send({ message: 'No active order found' });
-
     res.send(order);
   } catch (err) {
-    console.error('Error in newOrderForCurrentUser:', err);
     res.status(500).send({ error: err.message });
   }
 });
 
 // ✅ Get All Status
 router.get('/allstatus', (req, res) => {
-  const allStatus = Object.values(OrderStatus);
-  res.send(allStatus);
+  res.send(Object.values(OrderStatus));
 });
 
 // ✅ Get Orders by Status
@@ -251,17 +255,12 @@ router.get(
     const status = req.params.status;
     const user = await UserModel.findById(req.user.id);
     const filter = {};
-
     if (!user.isAdmin) filter.user = user._id;
     if (status) filter.status = status;
 
     const orders = await OrderModel.find(filter)
-      .populate({
-        path: 'items.product',  
-        select: 'name images quantities'
-      })
+      .populate({ path: 'items.product', select: 'name images quantities' })
       .sort('-createdAt');
-
     res.send(orders);
   })
 );
@@ -285,7 +284,6 @@ router.get(
       .populate('user')
       .populate({ path: 'payment', select: 'status' })
       .sort('-createdAt');
-
     res.json(orders);
   })
 );
@@ -310,7 +308,6 @@ router.patch(
   handler(async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
-
     const payment = await PaymentModel.findByIdAndUpdate(id, { status }, { new: true });
     if (!payment) return res.status(404).json({ message: 'Payment not found' });
 
@@ -322,7 +319,6 @@ router.patch(
         await order.save();
       }
     }
-
     res.json(payment);
   })
 );
@@ -333,7 +329,6 @@ router.get('/user-purchase-count', auth, async (req, res) => {
     const count = await OrderModel.countDocuments({ user: req.user.id, status: 'PAYED' });
     res.json({ count });
   } catch (err) {
-    console.error('Error in user-purchase-count:', err);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -348,11 +343,8 @@ router.get(
   })
 );
 
-const getNewOrderForCurrentUser = async req =>
-  await OrderModel.findOne({
-    user: req.user.id,
-    status: OrderStatus.NEW,
-  })
+const getNewOrderForCurrentUser = async (req) =>
+  await OrderModel.findOne({ user: req.user.id, status: OrderStatus.NEW })
     .sort({ createdAt: -1 })
     .populate('user');
 
