@@ -175,11 +175,16 @@ function RazorpayGateway({ order }) {
 
     try {
       // ✅ Step 1: Create Razorpay order in backend
+      const user = JSON.parse(localStorage.getItem("user"));
+const token = user?.token?.trim();
       const createOrderRes = await fetch('/api/orders/razorpay/create-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      });
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`,
+  },
+  credentials: 'include', // optional, only needed if backend uses cookies
+});
       const razorpayOrder = await createOrderRes.json();
       if (!razorpayOrder?.orderId) {
         toast.error('Failed to create Razorpay order');
