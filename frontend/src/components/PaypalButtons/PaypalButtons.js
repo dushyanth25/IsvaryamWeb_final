@@ -76,7 +76,7 @@ function Buttons({ order }) {
       }
 
       const options = {
-        key:'rzp_live_nOE6tIqppebXYT',
+        key:'rzp_test_9SiLlGXPcCjPhi',
         amount: data.amount,
         currency: data.currency,
         name: "Your Store Name",
