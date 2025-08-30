@@ -43,7 +43,7 @@ export default function Header() {
   // Fetch header color from server and update dynamically
   const fetchHeaderColor = async () => {
     try {
-      const res = await fetch('https://isvaryamweb-final.onrender.com/api/colors/colorheader');
+      const res = await fetch('https://demo.isvaryam.com/api/colors/colorheader');
       const data = await res.json();
       if (data?.color) {
         setHeaderColor(data.color);
