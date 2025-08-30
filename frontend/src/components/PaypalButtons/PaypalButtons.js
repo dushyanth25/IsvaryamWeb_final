@@ -18,13 +18,17 @@ export default function PaymentButtons({ order }) {
     <div className="payment-gateway-container">
       <div className="gateway-selector">
         <button
-          className={`gateway-tab ${activeGateway === "paypal" ? "active" : ""}`}
+          className={`gateway-tab ${
+            activeGateway === "paypal" ? "active" : ""
+          }`}
           onClick={() => setActiveGateway("paypal")}
         >
           PayPal
         </button>
         <button
-          className={`gateway-tab ${activeGateway === "razorpay" ? "active" : ""}`}
+          className={`gateway-tab ${
+            activeGateway === "razorpay" ? "active" : ""
+          }`}
           onClick={() => setActiveGateway("razorpay")}
         >
           Razorpay
@@ -33,7 +37,11 @@ export default function PaymentButtons({ order }) {
 
       <div className="gateway-content">
         {activeGateway === "paypal" && (
-          <PaypalGateway order={order} usdPrice={usdPrice} setUsdPrice={setUsdPrice} />
+          <PaypalGateway
+            order={order}
+            usdPrice={usdPrice}
+            setUsdPrice={setUsdPrice}
+          />
         )}
         {activeGateway === "razorpay" && <RazorpayGateway order={order} />}
       </div>
@@ -51,7 +59,9 @@ function PaypalGateway({ order, usdPrice, setUsdPrice }) {
   useEffect(() => {
     async function fetchRate() {
       try {
-        const res = await fetch("https://api.exchangerate.host/convert?from=INR&to=USD");
+        const res = await fetch(
+          "https://api.exchangerate.host/convert?from=INR&to=USD"
+        );
         const data = await res.json();
         const rate = data?.info?.rate || 0.012;
         setUsdPrice((order.totalPrice * rate).toFixed(2));
@@ -130,71 +140,15 @@ function PaypalButtons({ order, usdPrice }) {
 }
 
 /* ==============================
-   RAZORPAY GATEWAY
+   RAZORPAY GATEWAY (Clean)
 ================================= */
 function RazorpayGateway({ order }) {
   const { clearCart } = useCart();
   const navigate = useNavigate();
   const { showLoading, hideLoading } = useLoading();
 
-  const loadScript = (src) => {
-    return new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = src;
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  };
-
-  const displayRazorpay = async () => {
-    showLoading();
-
-    // Load Razorpay SDK
-    const sdkLoaded = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
-    if (!sdkLoaded) {
-      hideLoading();
-      toast.error("Razorpay SDK failed to load. Are you online?");
-      return;
-    }
-
-    try {
-      // 🔑 Fix: Read token properly
-      const user = JSON.parse(localStorage.getItem("user"));
-      const token = user?.token;
-      if (!token) {
-        hideLoading();
-        toast.error("Please login to continue payment");
-        navigate("/login");
-        return;
-      }
-      console.log("🔑 Token being sent:", token);
-
-      // ✅ Step 1: Ask backend to create Razorpay Order
-      const createOrderRes = await fetch("https://demo.isvaryam.com/api/orders/razorpay/create-order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        credentials: "include",
-        body: JSON.stringify({ orderId: order._id }),
-      });
-
-      if (createOrderRes.status === 401) {
-        hideLoading();
-        toast.error("Unauthorized. Please login again.");
-        navigate("/login");
-        return;
-      }
-
-      function RazorpayGateway({ order }) {
-  const { clearCart } = useCart();
-  const navigate = useNavigate();
-  const { showLoading, hideLoading } = useLoading();
-
   useEffect(() => {
-    // Load Razorpay SDK on component mount
+    // Load Razorpay SDK once
     if (!window.Razorpay) {
       const script = document.createElement("script");
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
@@ -221,15 +175,17 @@ function RazorpayGateway({ order }) {
       console.log("🔑 Token being sent:", token);
 
       // ✅ Step 1: Ask backend to create Razorpay Order
-      // FIXED: Use the correct endpoint URL
-      const createOrderRes = await fetch("https://demo.isvaryam.com/api/orders/razorpay/create-order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({ orderId: order._id }),
-      });
+      const createOrderRes = await fetch(
+        "https://demo.isvaryam.com/api/orders/razorpay/create-order",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ orderId: order._id }),
+        }
+      );
 
       if (createOrderRes.status === 401) {
         hideLoading();
@@ -246,7 +202,6 @@ function RazorpayGateway({ order }) {
       }
 
       const razorpayOrder = await createOrderRes.json();
-
       if (!razorpayOrder?.orderId) {
         toast.error("Failed to create Razorpay order");
         hideLoading();
@@ -254,9 +209,9 @@ function RazorpayGateway({ order }) {
       }
 
       // ✅ Step 2: Open Razorpay Checkout
-      // FIXED: Use the correct key (either from env or hardcoded for testing)
-      const razorpayKey = process.env.REACT_APP_RAZORPAY_KEY_ID || 'rzp_live_nOE6tIqppebXYT';
-      
+      const razorpayKey =
+        process.env.REACT_APP_RAZORPAY_KEY_ID || "rzp_live_nOE6tIqppebXYT";
+
       const options = {
         key: razorpayKey,
         amount: razorpayOrder.amount,
@@ -267,15 +222,17 @@ function RazorpayGateway({ order }) {
         handler: async function (response) {
           try {
             // ✅ Step 3: Verify payment with backend
-            // FIXED: Use the correct endpoint URL
-            const verifyRes = await fetch("https://demo.isvaryam.com/api/orders/razorpay/verify-payment", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-              },
-              body: JSON.stringify(response),
-            });
+            const verifyRes = await fetch(
+              "https://demo.isvaryam.com/api/orders/razorpay/verify-payment",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(response),
+              }
+            );
 
             if (!verifyRes.ok) {
               const errorText = await verifyRes.text();
@@ -283,10 +240,9 @@ function RazorpayGateway({ order }) {
             }
 
             const result = await verifyRes.json();
-            
+
             if (result.success) {
-              // Save payment and redirect
-              await pay(result.paymentId);
+              await pay(result.paymentId); // save payment
               clearCart();
               toast.success("Payment Successful");
               navigate("/track/" + result.orderId);
