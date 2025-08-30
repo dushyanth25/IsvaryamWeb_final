@@ -162,11 +162,16 @@ function RazorpayGateway({ order }) {
 
     try {
       // ✅ Step 1: Ask backend to create Razorpay Order
-      const createOrderRes = await fetch('/api/orders/razorpay/create-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      });
+      // Step 1: Ask backend to create Razorpay Order
+const createOrderRes = await fetch('/api/orders/razorpay/create-order', {
+  method: 'POST',
+  headers: { 
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('token')}` // ✅ add this
+  },
+  credentials: 'include',
+});
+
       const razorpayOrder = await createOrderRes.json();
 
       if (!razorpayOrder?.orderId) {
