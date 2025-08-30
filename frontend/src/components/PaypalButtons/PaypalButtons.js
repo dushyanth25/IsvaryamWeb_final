@@ -2,40 +2,40 @@ import {
   PayPalButtons,
   PayPalScriptProvider,
   usePayPalScriptReducer,
-} from '@paypal/react-paypal-js';
-import React, { useEffect, useState } from 'react';
-import { useLoading } from '../../hooks/useLoading';
-import { useCart } from '../../hooks/useCart';
-import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
-import { pay } from '../../services/orderService';
+} from "@paypal/react-paypal-js";
+import React, { useEffect, useState } from "react";
+import { useLoading } from "../../hooks/useLoading";
+import { useCart } from "../../hooks/useCart";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { pay } from "../../services/orderService";
 
 export default function PaymentButtons({ order }) {
-  const [activeGateway, setActiveGateway] = useState('paypal');
+  const [activeGateway, setActiveGateway] = useState("paypal");
   const [usdPrice, setUsdPrice] = useState(null);
 
   return (
     <div className="payment-gateway-container">
       <div className="gateway-selector">
         <button
-          className={`gateway-tab ${activeGateway === 'paypal' ? 'active' : ''}`}
-          onClick={() => setActiveGateway('paypal')}
+          className={`gateway-tab ${activeGateway === "paypal" ? "active" : ""}`}
+          onClick={() => setActiveGateway("paypal")}
         >
           PayPal
         </button>
         <button
-          className={`gateway-tab ${activeGateway === 'razorpay' ? 'active' : ''}`}
-          onClick={() => setActiveGateway('razorpay')}
+          className={`gateway-tab ${activeGateway === "razorpay" ? "active" : ""}`}
+          onClick={() => setActiveGateway("razorpay")}
         >
           Razorpay
         </button>
       </div>
 
       <div className="gateway-content">
-        {activeGateway === 'paypal' && (
+        {activeGateway === "paypal" && (
           <PaypalGateway order={order} usdPrice={usdPrice} setUsdPrice={setUsdPrice} />
         )}
-        {activeGateway === 'razorpay' && <RazorpayGateway order={order} />}
+        {activeGateway === "razorpay" && <RazorpayGateway order={order} />}
       </div>
     </div>
   );
@@ -51,14 +51,12 @@ function PaypalGateway({ order, usdPrice, setUsdPrice }) {
   useEffect(() => {
     async function fetchRate() {
       try {
-        const res = await fetch(
-          'https://api.exchangerate.host/convert?from=INR&to=USD'
-        );
+        const res = await fetch("https://api.exchangerate.host/convert?from=INR&to=USD");
         const data = await res.json();
         const rate = data?.info?.rate || 0.012;
         setUsdPrice((order.totalPrice * rate).toFixed(2));
       } catch (err) {
-        console.error('Currency conversion failed:', err);
+        console.error("Currency conversion failed:", err);
         setUsdPrice((order.totalPrice * 0.012).toFixed(2));
       }
     }
@@ -70,8 +68,8 @@ function PaypalGateway({ order, usdPrice, setUsdPrice }) {
   return (
     <PayPalScriptProvider
       options={{
-        'client-id': clientId,
-        currency: 'USD',
+        "client-id": clientId,
+        currency: "USD",
       }}
     >
       <PaypalButtons order={order} usdPrice={usdPrice} />
@@ -95,7 +93,7 @@ function PaypalButtons({ order, usdPrice }) {
         {
           description: `Order Payment (₹${order.totalPrice})`,
           amount: {
-            currency_code: 'USD',
+            currency_code: "USD",
             value: usdPrice,
           },
         },
@@ -106,24 +104,24 @@ function PaypalButtons({ order, usdPrice }) {
   const onApprove = async (data, actions) => {
     try {
       const payment = await actions.order.capture();
-      const orderId = await pay(payment.id, 'paypal');
+      const orderId = await pay(payment.id, "paypal");
       clearCart();
-      toast.success('Payment Saved Successfully');
-      navigate('/track/' + orderId);
+      toast.success("Payment Saved Successfully");
+      navigate("/track/" + orderId);
     } catch (error) {
-      toast.error('Payment Save Failed');
+      toast.error("Payment Save Failed");
       console.error(error);
     }
   };
 
   const onError = (err) => {
-    toast.error('Payment Failed');
-    console.error('PayPal Error:', err);
+    toast.error("Payment Failed");
+    console.error("PayPal Error:", err);
   };
 
   return (
     <PayPalButtons
-      style={{ layout: 'vertical' }}
+      style={{ layout: "vertical" }}
       createOrder={createOrder}
       onApprove={onApprove}
       onError={onError}
@@ -141,7 +139,7 @@ function RazorpayGateway({ order }) {
 
   const loadScript = (src) => {
     return new Promise((resolve) => {
-      const script = document.createElement('script');
+      const script = document.createElement("script");
       script.src = src;
       script.onload = () => resolve(true);
       script.onerror = () => resolve(false);
@@ -153,46 +151,47 @@ function RazorpayGateway({ order }) {
     showLoading();
 
     // Load Razorpay SDK
-    const sdkLoaded = await loadScript(
-      'https://checkout.razorpay.com/v1/checkout.js'
-    );
+    const sdkLoaded = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
     if (!sdkLoaded) {
       hideLoading();
-      toast.error('Razorpay SDK failed to load. Are you online?');
+      toast.error("Razorpay SDK failed to load. Are you online?");
       return;
     }
 
     try {
-      // ✅ Ensure user token
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (!user?.token) {
+      // 🔑 Fix: Read token properly
+      const user = JSON.parse(localStorage.getItem("user"));
+      const token = user?.token;
+      if (!token) {
         hideLoading();
-        toast.error('Please log in to continue payment');
-        navigate('/login');
+        toast.error("Please login to continue payment");
+        navigate("/login");
         return;
       }
-      const token = user.token;
+      console.log("🔑 Token being sent:", token);
 
-      // ✅ Step 1: Create Razorpay Order via backend
-      const createOrderRes = await fetch('/api/orders/razorpay/create-order', {
-        method: 'POST',
+      // ✅ Step 1: Ask backend to create Razorpay Order
+      const createOrderRes = await fetch("/api/orders/razorpay/create-order", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
+        body: JSON.stringify({ orderId: order._id }),
       });
 
       if (createOrderRes.status === 401) {
         hideLoading();
-        toast.error('Unauthorized. Please log in again.');
-        navigate('/login');
+        toast.error("Unauthorized. Please login again.");
+        navigate("/login");
         return;
       }
 
       const razorpayOrder = await createOrderRes.json();
 
       if (!razorpayOrder?.orderId) {
-        toast.error('Failed to create Razorpay order');
+        toast.error("Failed to create Razorpay order");
         hideLoading();
         return;
       }
@@ -202,35 +201,33 @@ function RazorpayGateway({ order }) {
         key: process.env.REACT_APP_RAZORPAY_KEY_ID,
         amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
-        name: 'Isvaryam',
+        name: "Isvaryam",
         description: `Order #${order._id}`,
         order_id: razorpayOrder.orderId,
         handler: async function (response) {
           try {
             // ✅ Step 3: Verify payment with backend
-            const verifyRes = await fetch(
-              '/api/orders/razorpay/verify-payment',
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(response),
-              }
-            );
+            const verifyRes = await fetch("/api/orders/razorpay/verify-payment", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              credentials: "include",
+              body: JSON.stringify(response),
+            });
 
             const result = await verifyRes.json();
             if (result.success) {
               clearCart();
-              toast.success('Payment Successful');
-              navigate('/track/' + result.orderId);
+              toast.success("Payment Successful");
+              navigate("/track/" + result.orderId);
             } else {
-              toast.error(result.error || 'Payment verification failed');
+              toast.error(result.error || "Payment verification failed");
             }
           } catch (error) {
             console.error(error);
-            toast.error('Payment Save Failed');
+            toast.error("Payment Save Failed");
           } finally {
             hideLoading();
           }
@@ -245,15 +242,15 @@ function RazorpayGateway({ order }) {
           order_id: order._id,
         },
         theme: {
-          color: '#3399cc',
+          color: "#3399cc",
         },
       };
 
       const paymentObject = new window.Razorpay(options);
       paymentObject.open();
     } catch (error) {
-      console.error('Razorpay Init Error:', error);
-      toast.error('Error initializing Razorpay');
+      console.error("Razorpay Init Error:", error);
+      toast.error("Error initializing Razorpay");
       hideLoading();
     }
   };
@@ -264,7 +261,7 @@ function RazorpayGateway({ order }) {
         Pay with Razorpay
       </button>
       <p className="razorpay-note">
-        You will be redirected to Razorpay&apos;s secure payment page
+        You will be redirected to Razorpay's secure payment page
       </p>
     </div>
   );
