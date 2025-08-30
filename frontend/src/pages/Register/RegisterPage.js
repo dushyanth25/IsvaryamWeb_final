@@ -38,7 +38,7 @@ export default function RegisterModal({ onClose, onSwitchToLogin }) {
       return;
     }
     try {
-      const res = await fetch('http://localhost:5000/api/users/register', {
+      const res = await fetch('https://demo.isvaryam.com/api/users/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -79,7 +79,7 @@ export default function RegisterModal({ onClose, onSwitchToLogin }) {
     try {
       setOtpMessage('Sending OTP...');
       // ✅ fixed API path
-      const res = await fetch('http://localhost:5000/api/otp/send-otp', {
+      const res = await fetch('https://demo.isvaryam.com/api/otp/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -106,7 +106,7 @@ export default function RegisterModal({ onClose, onSwitchToLogin }) {
     try {
       setOtpMessage('Verifying OTP...');
       // ✅ fixed API path
-      const res = await fetch('http://localhost:5000/api/otp/verify-otp', {
+      const res = await fetch('https://demo.isvaryam.com/api/otp/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: otpEmail, otp }),
