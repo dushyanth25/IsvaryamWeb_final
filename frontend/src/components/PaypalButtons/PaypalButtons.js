@@ -5,10 +5,10 @@ import {
 } from '@paypal/react-paypal-js';
 import React, { useEffect, useState } from 'react';
 import { useLoading } from '../../hooks/useLoading';
-import { pay } from '../../services/orderService';
 import { useCart } from '../../hooks/useCart';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { pay } from '../../services/orderService';
 
 export default function PaymentButtons({ order }) {
   const [activeGateway, setActiveGateway] = useState('paypal');
@@ -17,13 +17,13 @@ export default function PaymentButtons({ order }) {
   return (
     <div className="payment-gateway-container">
       <div className="gateway-selector">
-        <button 
+        <button
           className={`gateway-tab ${activeGateway === 'paypal' ? 'active' : ''}`}
           onClick={() => setActiveGateway('paypal')}
         >
           PayPal
         </button>
-        <button 
+        <button
           className={`gateway-tab ${activeGateway === 'razorpay' ? 'active' : ''}`}
           onClick={() => setActiveGateway('razorpay')}
         >
@@ -43,22 +43,22 @@ export default function PaymentButtons({ order }) {
   );
 }
 
+/* ==============================
+   PAYPAL GATEWAY
+================================= */
 function PaypalGateway({ order, usdPrice, setUsdPrice }) {
   const clientId = process.env.REACT_APP_PAYPAL_CLIENT_ID;
 
-  // ✅ fetch INR → USD conversion rate dynamically
+  // Convert INR → USD
   useEffect(() => {
     async function fetchRate() {
       try {
-        const res = await fetch(
-          "https://api.exchangerate.host/convert?from=INR&to=USD"
-        );
+        const res = await fetch("https://api.exchangerate.host/convert?from=INR&to=USD");
         const data = await res.json();
-        const rate = data?.info?.rate || 0.012; // fallback to ~0.012
+        const rate = data?.info?.rate || 0.012;
         setUsdPrice((order.totalPrice * rate).toFixed(2));
       } catch (err) {
         console.error("Currency conversion failed:", err);
-        // fallback approx
         setUsdPrice((order.totalPrice * 0.012).toFixed(2));
       }
     }
@@ -71,7 +71,7 @@ function PaypalGateway({ order, usdPrice, setUsdPrice }) {
     <PayPalScriptProvider
       options={{
         "client-id": clientId,
-        currency: "USD", // ✅ use USD in PayPal
+        currency: "USD",
       }}
     >
       <PaypalButtons order={order} usdPrice={usdPrice} />
@@ -93,9 +93,9 @@ function PaypalButtons({ order, usdPrice }) {
     return actions.order.create({
       purchase_units: [
         {
-          description: `Order Payment (₹${order.totalPrice})`, // optional
+          description: `Order Payment (₹${order.totalPrice})`,
           amount: {
-            currency_code: 'USD', // ✅ PayPal accepts USD
+            currency_code: 'USD',
             value: usdPrice,
           },
         },
@@ -106,7 +106,7 @@ function PaypalButtons({ order, usdPrice }) {
   const onApprove = async (data, actions) => {
     try {
       const payment = await actions.order.capture();
-      const orderId = await pay(payment.id);
+      const orderId = await pay(payment.id, 'paypal');
       clearCart();
       toast.success('Payment Saved Successfully');
       navigate('/track/' + orderId);
@@ -131,6 +131,9 @@ function PaypalButtons({ order, usdPrice }) {
   );
 }
 
+/* ==============================
+   RAZORPAY GATEWAY
+================================= */
 function RazorpayGateway({ order }) {
   const { clearCart } = useCart();
   const navigate = useNavigate();
@@ -140,97 +143,108 @@ function RazorpayGateway({ order }) {
     return new Promise((resolve) => {
       const script = document.createElement('script');
       script.src = src;
-      script.onload = () => {
-        resolve(true);
-      };
-      script.onerror = () => {
-        resolve(false);
-      };
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
       document.body.appendChild(script);
     });
   };
 
   const displayRazorpay = async () => {
     showLoading();
-    
+
     // Load Razorpay SDK
-    const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
-    
-    if (!res) {
+    const sdkLoaded = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
+    if (!sdkLoaded) {
       hideLoading();
       toast.error('Razorpay SDK failed to load. Are you online?');
       return;
     }
 
-    // Create order data for Razorpay
-  const options = {
-  key: process.env.REACT_APP_RAZORPAY_KEY_ID, // ✅ fix
-  amount: order.totalPrice * 100,
-  currency: 'INR',
-  name: 'Isvaryam',
-  description: `Order #${order._id}`,
-  image: '/logo.png',
-  handler: async function (response) {
     try {
-      // ✅ Verify payment with backend
-      const verifyRes = await fetch('/api/orders/razorpay/verify-payment', {
+      // ✅ Step 1: Ask backend to create Razorpay Order
+      const createOrderRes = await fetch('/api/orders/razorpay/create-order', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`, // if using JWT
-        },
-        body: JSON.stringify(response), // { razorpay_payment_id, razorpay_order_id, razorpay_signature }
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
       });
+      const razorpayOrder = await createOrderRes.json();
 
-      const result = await verifyRes.json();
-      if (result.success) {
-        clearCart();
-        toast.success('Payment Saved Successfully');
-        navigate('/track/' + result.orderId);
-      } else {
-        toast.error('Payment verification failed');
+      if (!razorpayOrder?.orderId) {
+        toast.error('Failed to create Razorpay order');
+        hideLoading();
+        return;
       }
-    } catch (error) {
-      toast.error('Payment Save Failed');
-      console.error(error);
-    } finally {
-      hideLoading();
-    }
-  },
-  prefill: {
-    name: order.name,
-    email: order.email,
-    contact: order.phone,
-  },
-  notes: {
-    address: order.address,
-    order_id: order._id,
-  },
-  theme: {
-    color: '#3399cc',
-  },
-};
 
+      // ✅ Step 2: Open Razorpay Checkout
+      const options = {
+        key: process.env.RAZORPAY_KEY_ID,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: 'Isvaryam',
+        description: `Order #${order._id}`,
+        order_id: razorpayOrder.orderId,
+        handler: async function (response) {
+          try {
+            // ✅ Step 3: Verify payment with backend
+            const verifyRes = await fetch('/api/orders/razorpay/verify-payment', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`, // if using JWT
+              },
+              credentials: 'include',
+              body: JSON.stringify(response),
+            });
 
-    try {
+            const result = await verifyRes.json();
+            if (result.success) {
+              clearCart();
+              toast.success('Payment Successful');
+              navigate('/track/' + result.orderId);
+            } else {
+              toast.error(result.error || 'Payment verification failed');
+            }
+          } catch (error) {
+            console.error(error);
+            toast.error('Payment Save Failed');
+          } finally {
+            hideLoading();
+          }
+        },
+        prefill: {
+          name: order.name,
+          email: order.email,
+          contact: order.phone,
+        },
+        notes: {
+          address: JSON.stringify(order.address || {}),
+          order_id: order._id,
+        },
+        theme: {
+          color: '#3399cc',
+        },
+      };
+
       const paymentObject = new window.Razorpay(options);
       paymentObject.open();
     } catch (error) {
+      console.error('Razorpay Init Error:', error);
       toast.error('Error initializing Razorpay');
-      console.error(error);
       hideLoading();
     }
   };
 
   return (
     <div className="razorpay-container">
-      <button 
+      <button
         onClick={displayRazorpay}
         className="razorpay-button"
       >
         Pay with Razorpay
       </button>
-      <p className="razorpay-note">You will be redirected to Razorpay's secure payment page</p>
+      <p className="razorpay-note">
+        You will be redirected to Razorpay's secure payment page
+      </p>
     </div>
   );
 }
