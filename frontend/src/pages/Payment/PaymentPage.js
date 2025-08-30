@@ -146,6 +146,7 @@ function PaypalButtons({ order, usdPrice }) {
 }
 
 // Razorpay Gateway Component
+// Razorpay Gateway Component
 function RazorpayGateway({ order }) {
   const { clearCart } = useCart();
   const navigate = useNavigate();
@@ -155,70 +156,92 @@ function RazorpayGateway({ order }) {
     return new Promise((resolve) => {
       const script = document.createElement('script');
       script.src = src;
-      script.onload = () => {
-        resolve(true);
-      };
-      script.onerror = () => {
-        resolve(false);
-      };
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
       document.body.appendChild(script);
     });
   };
 
   const displayRazorpay = async () => {
     showLoading();
-    
+
     // Load Razorpay SDK
     const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
-    
     if (!res) {
       hideLoading();
       toast.error('Razorpay SDK failed to load. Are you online?');
       return;
     }
 
-    // Create order data for Razorpay
-    const options = {
-      key: process.env.REACT_APP_RAZORPAY_KEY_ID,
-      amount: order.totalPrice * 100, // Razorpay expects amount in paise (so *100)
-      currency: 'INR',
-      name: 'Your Company Name',
-      description: `Order #${order._id}`,
-      image: '/logo.png', // Your company logo
-      handler: async function (response) {
-        // Payment successful
-        try {
-          const orderId = await pay(response.razorpay_payment_id, 'razorpay');
-          clearCart();
-          toast.success('Payment Saved Successfully');
-          navigate('/track/' + orderId);
-        } catch (error) {
-          toast.error('Payment Save Failed');
-          console.error(error);
-        } finally {
-          hideLoading();
-        }
-      },
-      prefill: {
-        name: order.name,
-        email: order.email,
-        contact: order.phone
-      },
-      notes: {
-        address: order.address,
-        order_id: order._id
-      },
-      theme: {
-        color: '#3399cc'
-      }
-    };
-
     try {
+      // ✅ Step 1: Create Razorpay order in backend
+      const createOrderRes = await fetch('/api/orders/razorpay/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      });
+      const razorpayOrder = await createOrderRes.json();
+      if (!razorpayOrder?.orderId) {
+        toast.error('Failed to create Razorpay order');
+        hideLoading();
+        return;
+      }
+
+      // ✅ Step 2: Open Razorpay Checkout
+      const options = {
+        key: process.env.REACT_APP_RAZORPAY_KEY_ID,
+        amount: razorpayOrder.amount, // already in paise
+        currency: razorpayOrder.currency,
+        name: 'Your Company Name',
+        description: `Order #${order._id}`,
+        order_id: razorpayOrder.orderId, // razorpay orderId from backend
+        handler: async function (response) {
+          try {
+            // ✅ Step 3: Verify Payment with backend
+            const verifyRes = await fetch('/api/orders/razorpay/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+
+            const verifyData = await verifyRes.json();
+            if (verifyData.success) {
+              clearCart();
+              toast.success('Payment Successful');
+              navigate('/track/' + verifyData.orderId);
+            } else {
+              toast.error(verifyData.error || 'Payment Verification Failed');
+            }
+          } catch (err) {
+            console.error('Verify Error:', err);
+            toast.error('Payment Verification Failed');
+          } finally {
+            hideLoading();
+          }
+        },
+        prefill: {
+          name: order.name,
+          email: order.email,
+          contact: order.phone,
+        },
+        notes: {
+          address: JSON.stringify(order.address || {}),
+        },
+        theme: {
+          color: '#3399cc',
+        },
+      };
+
       const paymentObject = new window.Razorpay(options);
       paymentObject.open();
-    } catch (error) {
+    } catch (err) {
+      console.error('Razorpay Init Error:', err);
       toast.error('Error initializing Razorpay');
-      console.error(error);
       hideLoading();
     }
   };
@@ -231,7 +254,9 @@ function RazorpayGateway({ order }) {
       >
         Pay with Razorpay
       </button>
-      <p className={classes.razorpayNote}>You will be redirected to Razorpay's secure payment page</p>
+      <p className={classes.razorpayNote}>
+        You will be redirected to Razorpay's secure payment page
+      </p>
     </div>
   );
 }
