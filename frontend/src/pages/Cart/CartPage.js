@@ -22,7 +22,7 @@ export default function CartPage() {
   const [bgColor, setBgColor] = useState('#ffffff'); // Default white
 
   useEffect(() => {
-    axios.get('https://isvaryamweb-final.onrender.com/api/colors/colorcart')
+    axios.get('https://demo.isvaryam.com/api/colors/colorcart')
       .then((res) => setBgColor(res.data.color))
       .catch((err) => console.error('Error fetching background color:', err));
   }, []);
