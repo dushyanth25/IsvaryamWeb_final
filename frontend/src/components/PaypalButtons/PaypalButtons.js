@@ -35,9 +35,7 @@ export default function PaymentButtons({ order }) {
         {activeGateway === 'paypal' && (
           <PaypalGateway order={order} usdPrice={usdPrice} setUsdPrice={setUsdPrice} />
         )}
-        {activeGateway === 'razorpay' && (
-          <RazorpayGateway order={order} />
-        )}
+        {activeGateway === 'razorpay' && <RazorpayGateway order={order} />}
       </div>
     </div>
   );
@@ -53,12 +51,12 @@ function PaypalGateway({ order, usdPrice, setUsdPrice }) {
   useEffect(() => {
     async function fetchRate() {
       try {
-        const res = await fetch("https://api.exchangerate.host/convert?from=INR&to=USD");
+        const res = await fetch('https://api.exchangerate.host/convert?from=INR&to=USD');
         const data = await res.json();
         const rate = data?.info?.rate || 0.012;
         setUsdPrice((order.totalPrice * rate).toFixed(2));
       } catch (err) {
-        console.error("Currency conversion failed:", err);
+        console.error('Currency conversion failed:', err);
         setUsdPrice((order.totalPrice * 0.012).toFixed(2));
       }
     }
@@ -70,8 +68,8 @@ function PaypalGateway({ order, usdPrice, setUsdPrice }) {
   return (
     <PayPalScriptProvider
       options={{
-        "client-id": clientId,
-        currency: "USD",
+        'client-id': clientId,
+        currency: 'USD',
       }}
     >
       <PaypalButtons order={order} usdPrice={usdPrice} />
@@ -123,7 +121,7 @@ function PaypalButtons({ order, usdPrice }) {
 
   return (
     <PayPalButtons
-      style={{ layout: "vertical" }}
+      style={{ layout: 'vertical' }}
       createOrder={createOrder}
       onApprove={onApprove}
       onError={onError}
@@ -152,7 +150,6 @@ function RazorpayGateway({ order }) {
   const displayRazorpay = async () => {
     showLoading();
 
-    // Load Razorpay SDK
     const sdkLoaded = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
     if (!sdkLoaded) {
       hideLoading();
@@ -161,16 +158,24 @@ function RazorpayGateway({ order }) {
     }
 
     try {
+      // ✅ Correct way to get token from localStorage
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user?.token) {
+        hideLoading();
+        toast.error('Please login to pay');
+        navigate('/login');
+        return;
+      }
+      const token = user.token.trim();
+
       // ✅ Step 1: Ask backend to create Razorpay Order
-      // Step 1: Ask backend to create Razorpay Order
-const createOrderRes = await fetch('/api/orders/razorpay/create-order', {
-  method: 'POST',
-  headers: { 
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${localStorage.getItem('token')}` // ✅ add this
-  },
-  credentials: 'include',
-});
+      const createOrderRes = await fetch('/api/orders/razorpay/create-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       const razorpayOrder = await createOrderRes.json();
 
@@ -182,7 +187,7 @@ const createOrderRes = await fetch('/api/orders/razorpay/create-order', {
 
       // ✅ Step 2: Open Razorpay Checkout
       const options = {
-        key: process.env.RAZORPAY_KEY_ID,
+        key: process.env.REACT_APP_RAZORPAY_KEY_ID,
         amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
         name: 'Isvaryam',
@@ -195,9 +200,8 @@ const createOrderRes = await fetch('/api/orders/razorpay/create-order', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`, // if using JWT
+                Authorization: `Bearer ${token}`,
               },
-              credentials: 'include',
               body: JSON.stringify(response),
             });
 
@@ -241,14 +245,11 @@ const createOrderRes = await fetch('/api/orders/razorpay/create-order', {
 
   return (
     <div className="razorpay-container">
-      <button
-        onClick={displayRazorpay}
-        className="razorpay-button"
-      >
+      <button onClick={displayRazorpay} className="razorpay-button">
         Pay with Razorpay
       </button>
       <p className="razorpay-note">
-        You will be redirected to Razorpay's secure payment page
+        You will be redirected to Razorpay&apos;s secure payment page
       </p>
     </div>
   );
