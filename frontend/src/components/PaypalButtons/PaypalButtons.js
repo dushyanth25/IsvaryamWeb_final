@@ -222,7 +222,7 @@ function RazorpayGateway({ order }) {
 
       // ✅ Step 1: Ask backend to create Razorpay Order
       // FIXED: Use the correct endpoint URL
-      const createOrderRes = await fetch("https://final-isvaryam-backend-with-razorpay.onrender.com/api/orders/razorpay/create-order", {
+      const createOrderRes = await fetch("https://demo.isvaryam.com/api/orders/razorpay/create-order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -268,7 +268,7 @@ function RazorpayGateway({ order }) {
           try {
             // ✅ Step 3: Verify payment with backend
             // FIXED: Use the correct endpoint URL
-            const verifyRes = await fetch("https://final-isvaryam-backend-with-razorpay.onrender.com/api/orders/razorpay/verify-payment", {
+            const verifyRes = await fetch("https://demo.isvaryam.com/api/orders/razorpay/verify-payment", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
