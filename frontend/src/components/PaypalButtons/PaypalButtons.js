@@ -188,6 +188,63 @@ function RazorpayGateway({ order }) {
         return;
       }
 
+      function RazorpayGateway({ order }) {
+  const { clearCart } = useCart();
+  const navigate = useNavigate();
+  const { showLoading, hideLoading } = useLoading();
+
+  useEffect(() => {
+    // Load Razorpay SDK on component mount
+    if (!window.Razorpay) {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      script.onload = () => console.log("✅ Razorpay SDK loaded");
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  const displayRazorpay = async () => {
+    showLoading();
+
+    try {
+      // Get user token
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user?.token) {
+        hideLoading();
+        toast.error("Please login to continue payment");
+        navigate("/login");
+        return;
+      }
+
+      const token = user.token.trim();
+      console.log("🔑 Token being sent:", token);
+
+      // ✅ Step 1: Ask backend to create Razorpay Order
+      // FIXED: Use the correct endpoint URL
+      const createOrderRes = await fetch("https://final-isvaryam-backend-with-razorpay.onrender.com/api/orders/razorpay/create-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ orderId: order._id }),
+      });
+
+      if (createOrderRes.status === 401) {
+        hideLoading();
+        toast.error("Unauthorized. Please login again.");
+        navigate("/login");
+        return;
+      }
+
+      if (!createOrderRes.ok) {
+        const errorText = await createOrderRes.text();
+        hideLoading();
+        toast.error("Failed to create Razorpay order: " + errorText);
+        return;
+      }
+
       const razorpayOrder = await createOrderRes.json();
 
       if (!razorpayOrder?.orderId) {
@@ -197,8 +254,11 @@ function RazorpayGateway({ order }) {
       }
 
       // ✅ Step 2: Open Razorpay Checkout
+      // FIXED: Use the correct key (either from env or hardcoded for testing)
+      const razorpayKey = process.env.REACT_APP_RAZORPAY_KEY_ID || 'rzp_live_nOE6tIqppebXYT';
+      
       const options = {
-        key: process.env.REACT_APP_RAZORPAY_KEY_ID,
+        key: razorpayKey,
         amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
         name: "Isvaryam",
@@ -207,18 +267,26 @@ function RazorpayGateway({ order }) {
         handler: async function (response) {
           try {
             // ✅ Step 3: Verify payment with backend
-            const verifyRes = await fetch("/api/orders/razorpay/verify-payment", {
+            // FIXED: Use the correct endpoint URL
+            const verifyRes = await fetch("https://final-isvaryam-backend-with-razorpay.onrender.com/api/orders/razorpay/verify-payment", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
+                "Authorization": `Bearer ${token}`,
               },
-              credentials: "include",
               body: JSON.stringify(response),
             });
 
+            if (!verifyRes.ok) {
+              const errorText = await verifyRes.text();
+              throw new Error(errorText || "Payment verification failed");
+            }
+
             const result = await verifyRes.json();
+            
             if (result.success) {
+              // Save payment and redirect
+              await pay(result.paymentId);
               clearCart();
               toast.success("Payment Successful");
               navigate("/track/" + result.orderId);
@@ -226,8 +294,8 @@ function RazorpayGateway({ order }) {
               toast.error(result.error || "Payment verification failed");
             }
           } catch (error) {
-            console.error(error);
-            toast.error("Payment Save Failed");
+            console.error("Payment verification error:", error);
+            toast.error("Payment Save Failed: " + error.message);
           } finally {
             hideLoading();
           }
@@ -250,7 +318,7 @@ function RazorpayGateway({ order }) {
       paymentObject.open();
     } catch (error) {
       console.error("Razorpay Init Error:", error);
-      toast.error("Error initializing Razorpay");
+      toast.error("Error initializing Razorpay: " + error.message);
       hideLoading();
     }
   };
