@@ -143,7 +143,7 @@ export default function OrdersPage() {
                       order.paymentStatus === 'COMPLETED' ? classes.completed : classes.pending
                     }`}
                   >
-                    {order.paymentStatus || 'PENDING'}
+                    {order.paymentStatus || 'NEW'}
                   </div>
                 </div>
 
@@ -195,7 +195,7 @@ export default function OrdersPage() {
                       <FaRedoAlt className={classes.action_icon} /> Reorder
                     </button>
 
-                    {order.status === 'NEW' && (
+                    {order.status === 'PENDING' && (
                       <button
                         className={classes.delete_button}
                         onClick={() => deleteOrder(order._id)}
