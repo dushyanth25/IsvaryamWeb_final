@@ -41,7 +41,7 @@ const orderSchema = new Schema(
 
     items: { type: [OrderItemSchema], required: true },
 
-    status: { type: String, default: OrderStatus.NEW },
+    status: { type: String, default: OrderStatus.PENDING },
     user: { type: Schema.Types.ObjectId, ref: 'User' },
   },
   {
