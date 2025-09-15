@@ -1,5 +1,6 @@
 export const OrderStatus = {
   NEW: 'NEW',
+  PENDING: 'PENDING',
   PAYED: 'PAYED',
   SHIPPED: 'SHIPPED',
   CANCELLED: 'CANCELLED',
