@@ -366,7 +366,7 @@ OrderModel.deleteMany({
   })
   .catch(err => {
     console.error('❌ Error deleting pending orders:', err);
-  }
+  })
 
 
 export default router;
