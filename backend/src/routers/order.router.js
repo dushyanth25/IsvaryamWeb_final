@@ -12,7 +12,8 @@ import admin from '../middleware/admin.mid.js';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import DeliveryChargeModel from '../models/deliveryCharge.model.js';
-import cron from 'node-cron';
+const cron = require('node-cron');
+
 // Razorpay instance
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
