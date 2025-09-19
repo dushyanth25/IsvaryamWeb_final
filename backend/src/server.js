@@ -22,7 +22,7 @@ import otpRoute from './routers/auth.router.js';
 import mailRoute from './routers/contact.router.js';
 import imageRouter from './routers/image.router.js';
 import colorRouter from './routers/color.router.js';
-const cron = require('node-cron');
+import cron from 'node-cron';
 
 import './models/user.model.js';
 import './models/food.model.js';
