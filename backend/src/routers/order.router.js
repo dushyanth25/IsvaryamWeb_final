@@ -12,7 +12,8 @@ import admin from '../middleware/admin.mid.js';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import DeliveryChargeModel from '../models/deliveryCharge.model.js';
-const cron = require('node-cron');
+import cron from 'node-cron';
+
 
 // Razorpay instance
 const razorpay = new Razorpay({
