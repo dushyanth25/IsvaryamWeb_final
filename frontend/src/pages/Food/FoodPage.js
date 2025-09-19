@@ -9,6 +9,8 @@
   import NotFound from '../../components/NotFound/NotFound';
   import classes from './foodPage.module.css';
   import { useMemo } from 'react';
+import LoginModal from '../../components/LoginModal/LoginModal';
+import RegisterModal from '../../components/RegisterModal/RegisterModal';
 
   export default function FoodPage() {
     useEffect(() => {
@@ -37,6 +39,10 @@
     const [showAllReviews, setShowAllReviews] = useState(false);
     const [zoomedImage, setZoomedImage] = useState(null);
     const [showZoomModal, setShowZoomModal] = useState(false);
+const [showLoginModal, setShowLoginModal] = useState(false);
+const [showRegisterModal, setShowRegisterModal] = useState(false);
+
+
 
     const { id } = useParams();
     const { addToCart } = useCart();
@@ -101,12 +107,20 @@
       fetchReviews();
     }, [id, fetchReviews]);
 
-    const handleAddToCart = () => {
-      if (food && selectedSize) {
-        addToCart(food, selectedSize);
-        navigate('/cart');
-      }
-    };
+   const handleAddToCart = () => {
+  const userId = localStorage.getItem("userId"); // null if not logged in
+
+  if (!userId) {
+    setShowLoginModal(true);
+    return;
+  }
+
+  if (food && selectedSize) {
+    addToCart(food, selectedSize);
+    navigate('/cart');
+  }
+};
+
 
     const getDiscountedPrice = (price, discount) =>
       discount ? price - (price * discount) / 100 : price;
@@ -455,7 +469,14 @@
           <div className={classes.reviewDialogOverlay}>
             <div className={classes.reviewDialog}>
               <h3 className={classes.dialogTitle}>Write a Review</h3>
-              <div className={classes.dialogClose} onClick={() => setShowDialog(false)}>×</div>
+              <div
+  className={classes.dialogClose}
+  style={{ color: "black" }}
+  onClick={() => setShowDialog(false)}
+>
+  X
+</div>
+
               
               <div className={classes.ratingInput}>
                 <label>Rating:</label>
@@ -503,26 +524,49 @@
         )}
 
         {/* Zoom Modal */}
-        {showZoomModal && (
-          <div className={classes.zoomModalOverlay}>
-            <div className={classes.zoomModalContent}>
-              <button className={classes.closeModalFixed} onClick={() => setShowZoomModal(false)}>×</button>
-              <div
-                className={classes.zoomFrame}
-                style={{ backgroundImage: `url(${zoomedImage})` }}
-                onMouseMove={(e) => {
-                  const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-                  const x = ((e.pageX - left) / width) * 100;
-                  const y = ((e.pageY - top) / height) * 100;
-                  e.currentTarget.style.backgroundPosition = `${x}% ${y}%`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundPosition = 'center';
-                }}
-              />
-            </div>
-          </div>
-        )}
+   {showZoomModal && (
+  <div className={classes.zoomModalOverlay}>
+    <div className={classes.zoomModalContent}>
+      <button
+        className={classes.closeModalFixed}
+        onClick={() => setShowZoomModal(false)}
+      >
+        
+      </button>
+
+      <div
+        className={classes.zoomFrame}
+        style={{
+          backgroundImage: `url(${zoomedImage})`,
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center", // stays fixed
+          backgroundSize: "50%",       // zoom level (increase/decrease as you like)
+        }}
+      />
+    </div>
+  </div>
+)}
+
+        {showLoginModal && (
+  <LoginModal
+    onClose={() => setShowLoginModal(false)}
+    onSwitchToRegister={() => {
+      setShowLoginModal(false);
+      setShowRegisterModal(true);
+    }}
+  />
+)}
+
+{showRegisterModal && (
+  <RegisterModal
+    onClose={() => setShowRegisterModal(false)}
+    onSwitchToLogin={() => {
+      setShowRegisterModal(false);
+      setShowLoginModal(true);
+    }}
+  />
+)}
+
       </div>
     );
   }
