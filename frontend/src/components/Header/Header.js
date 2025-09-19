@@ -86,9 +86,13 @@ export default function Header() {
         }}
       >
         <div className={classes.container}>
-          <Link to="/" className={classes.logo}>
-            <img src="/newlogo (1).png" alt="Isvaryam Logo" />
-          </Link>
+               <Link to="/" className={classes.logo}>
+  <img 
+    src="/newlogo (1).png" 
+    alt="Isvaryam Logo" 
+    style={{ width: "200px", height: "auto" }}  // increase size here
+  />
+</Link>
 
           <button
             className={classes.hamburger}
