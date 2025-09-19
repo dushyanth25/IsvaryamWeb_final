@@ -28,7 +28,7 @@
     "nodemailer": "^6.9.8",
     "razorpay": "^2.9.6",
     
-  "node-cron": "^3.0.3"
+    "node-cron": "^4.2.1",
     
   },
   "devDependencies": {
