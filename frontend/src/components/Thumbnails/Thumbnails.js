@@ -123,7 +123,7 @@ export default function Thumbnails({ foods }) {
                 {/* Second image from public folder (static) */}
                 <img
                   className={`${classes.productImage} ${classes.second}`}
-                  src="/Yt.webp"
+                  src="/sig2.webp"
                   alt={`${food.name} hover`}
                   onError={(e) => (e.target.style.display = 'none')}
                 />
