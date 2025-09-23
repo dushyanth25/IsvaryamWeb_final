@@ -79,14 +79,8 @@ export default function AboutUs() {
 
   // Sample data - replace with your actual certificate and shop images
   const certificates = [
-  { id: 1, image: '/Certificate images/Certificate images/fda.webp' },
   { id: 2, image: '/Certificate images/Certificate images/fssai.png', alt: 'Quality Assurance' },
-  { id: 3, image: '/Certificate images/Certificate images/gmp.avif', alt: 'Fair Trade Certified' },
-  { id: 4, image: '/Certificate images/Certificate images/haccp.avif', alt: 'Sustainable Practices' },
-  { id: 5, image: '/Certificate images/Certificate images/iac.avif', alt: 'Sustainable Practices' },
-  { id: 6, image: '/Certificate images/Certificate images/iaf.webp', alt: 'Sustainable Practices' },
-  { id: 7, image: '/Certificate images/Certificate images/iso-22000.webp', alt: 'Sustainable Practices' },
-  { id: 8, image: '/Certificate images/Certificate images/iso-90001.webp', alt: 'Sustainable Practices' },
+  { id: 3, image: '/Certificate images/Certificate images/msme.png', alt: 'Fair Trade Certified' }
 ];
 
   const shops = [
