@@ -369,6 +369,12 @@ OrderModel.deleteMany({
   .catch(err => {
     console.error('❌ Error deleting pending orders:', err);
   })
-
+OrderModel.deleteMany({ status: 'NEW' })
+  .then(result => {
+    console.log(`🗑️ Deleted ${result.deletedCount} orders with status NEW`);
+  })
+  .catch(err => {
+    console.error('❌ Error deleting NEW orders:', err);
+  });
 
 export default router;
