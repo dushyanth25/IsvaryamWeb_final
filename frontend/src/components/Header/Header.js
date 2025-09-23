@@ -43,7 +43,7 @@ export default function Header() {
   // Fetch header color from server and update dynamically
   const fetchHeaderColor = async () => {
     try {
-      const res = await fetch('https://demo.isvaryam.com/api/colors/colorheader');
+      const res = await fetch('http://localhost:5000/api/colors/colorheader');
       const data = await res.json();
       if (data?.color) {
         setHeaderColor(data.color);
@@ -74,9 +74,7 @@ export default function Header() {
 
   return (
     <>
-      <div className={classes.offerBar}>
-        🎉 Use coupon code <strong>ISVARYAM10</strong> and get 10% OFF on your first order! 🛒
-      </div>
+     
 
       <header
         className={classes.header}
@@ -86,13 +84,14 @@ export default function Header() {
         }}
       >
         <div className={classes.container}>
-               <Link to="/" className={classes.logo}>
+         <Link to="/" className={classes.logo}>
   <img 
     src="/newlogo (1).png" 
     alt="Isvaryam Logo" 
     style={{ width: "200px", height: "auto" }}  // increase size here
   />
 </Link>
+
 
           <button
             className={classes.hamburger}
@@ -114,10 +113,10 @@ export default function Header() {
             <ul className={classes.nav_links} style={{ color: textColor }}>
               <li><Link style={{ color: textColor }} to="/" onClick={() => setMenuOpen(false)}>Home</Link></li>
               <li><Link style={{ color: textColor }} to="/about" onClick={() => setMenuOpen(false)}>About Us</Link></li>
-
+            <li><Link style={{ color: textColor }} to="/product" onClick={() => setMenuOpen(false)}>Products</Link></li>
+                  
               {user ? (
                 <>
-                  <li><Link style={{ color: textColor }} to="/product" onClick={() => setMenuOpen(false)}>Products</Link></li>
                   <li><Link style={{ color: textColor }} to="/orders" onClick={() => setMenuOpen(false)}>My Orders</Link></li>
                   <li><Link style={{ color: textColor }} to="/cart" onClick={() => setMenuOpen(false)}>My Cart</Link></li>
                   <li>
