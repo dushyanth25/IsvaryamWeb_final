@@ -12,7 +12,7 @@ import { getOrderById } from '../../services/orderService';
 const orderTimeline = (status) => [
   { id: 1, title: 'Order Placed', description: 'Your order has been successfully placed.', status: 'placed', active: true },
   { id: 2, title: 'Order Confirmed', description: 'We\'ve received your order and are preparing it.', status: 'confirmed', active: status !== 'NEW' },
-  { id: 3, title: 'Payment Processed', description: 'Payment has been successfully processed.', status: 'payment', active: status !== 'NEW' && status !== 'CONFIRMED' },
+  { id: 3, title: 'Payment Processed', description: 'Payment has been successfully processed.', status: 'payment', active: status !== 'PENDING' && status !== 'CONFIRMED' },
   { id: 4, title: 'Shipped', description: 'Your order is on the way to you.', status: 'shipped', active: status === 'SHIPPED' || status === 'DELIVERED' },
   { id: 5, title: 'Delivered', description: 'Your order has been delivered successfully.', status: 'delivered', active: status === 'DELIVERED' }
 ];
@@ -136,7 +136,7 @@ export default function OrderTrackPage() {
           <h2 className={classes.section_title} style={{ marginTop: '1.5rem' }}>Order Items</h2>
           <OrderItemsList order={order} compact={true} />
 
-          {order.status === 'NEW' && (
+          {order.status === 'PENDING' && (
             <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
               <Link to={`/payment/${order._id}`} className={classes.payment_button}>
                 Complete Payment
