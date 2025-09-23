@@ -129,7 +129,7 @@ export default function Thumbnails({ foods }) {
                 />
 
                 <div className={classes.organicBadge}>
-                  <span>Organic</span>
+                  <span>Natural</span>
                 </div>
                 <div
                   className={classes.wishlistIcon}
