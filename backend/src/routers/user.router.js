@@ -57,21 +57,31 @@ function generateOTP() {
 
 // Send OTP via email
 async function sendOTPEmail(email, otp) {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+  try {
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
 
-  await transporter.sendMail({
-    from: `"Isvaryam" <${process.env.EMAIL_USER}>`,
-    to: email,
-    subject: 'Your OTP Verification Code',
-    text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
-  });
+    const info = await transporter.sendMail({
+      from: `"Isvaryam" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Your OTP Verification Code",
+      text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
+    });
+
+    console.log("OTP sent:", info.response);
+  } catch (err) {
+    console.error("Error sending OTP:", err);
+    throw err; // let route handle it
+  }
 }
+
 
 // --- Register Route ---
 // In the register route
