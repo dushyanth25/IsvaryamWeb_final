@@ -42,6 +42,7 @@ const CountdownBanner = () => {
   const [timeLeft, setTimeLeft] = useState({});
   const [status, setStatus] = useState('upcoming');
   const [bannerColor, setBannerColor] = useState('#ffffff'); // default white
+  
 
   // Fetch background color from API
   useEffect(() => {
