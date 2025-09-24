@@ -232,7 +232,7 @@ router.put(
 );
 
 // Send OTP (for signup)
-router.post("/send-otp", async (req, res) => {
+router.post('/send-otp', async (req, res) => {
   try {
     const { email } = req.body;
     if (!email) return res.status(400).send("Email is required!");
