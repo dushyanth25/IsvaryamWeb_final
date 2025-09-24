@@ -59,12 +59,26 @@ function generateOTP() {
 async function sendOTPEmail(email, otp) {
   try {
     const transporter = nodemailer.createTransport({
-      service: "gmail", // Let nodemailer handle host/port automatically
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        pass: process.env.EMAIL_PASS, // MUST be App Password
       },
+      connectionTimeout: 30000, // Increase to 30 seconds
+      greetingTimeout: 30000,
+      socketTimeout: 30000,
+      tls: {
+        ciphers: 'SSLv3', // Try different cipher
+        rejectUnauthorized: false
+      },
+      debug: true
     });
+
+    // Verify connection configuration
+    await transporter.verify();
+    console.log("SMTP connection verified");
 
     const info = await transporter.sendMail({
       from: `"Isvaryam" <${process.env.EMAIL_USER}>`,
