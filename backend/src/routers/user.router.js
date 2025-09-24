@@ -232,19 +232,14 @@ router.put(
 );
 
 // Send OTP (for signup)
-router.post(
-  '/send-otp',
-  handler(async (req, res) => {
+router.post("/send-otp", async (req, res) => {
+  try {
     const { email } = req.body;
-    console.log("Sending email:", email);
-
-    if (!email) {
-      return res.status(400).send('Email is required!');
-    }
+    if (!email) return res.status(400).send("Email is required!");
 
     const existingUser = await UserModel.findOne({ email: email.toLowerCase() });
     if (existingUser) {
-      return res.status(BAD_REQUEST).send('User already exists, please login!');
+      return res.status(400).send("User already exists, please login!");
     }
 
     const otp = generateOTP();
@@ -253,21 +248,18 @@ router.post(
       email: email.toLowerCase(),
       otp,
       createdAt: Date.now(),
-      expiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes expiry
+      expiresAt: Date.now() + 5 * 60 * 1000,
     });
 
-    try {
-      await sendOTPEmail(email, otp);
-      res.send({ message: 'OTP sent successfully!' });
-    } catch (error) {
-      console.error("❌ Error sending OTP:", error);
-      res.status(500).json({
-        error: 'Failed to send OTP. Please try again later.',
-        details: error.message, // optional, for debugging
-      });
-    }
-  })
-);
+    await sendOTPEmail(email, otp);
+
+    return res.send({ message: "OTP sent successfully!" });
+  } catch (err) {
+    console.error("Error in /send-otp:", err); // ✅ log exact issue
+    return res.status(500).send("Internal server error");
+  }
+});
+
 
 // Google signup
 router.post('/google-signup', async (req, res) => {
