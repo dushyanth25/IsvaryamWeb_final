@@ -59,9 +59,7 @@ function generateOTP() {
 async function sendOTPEmail(email, otp) {
   try {
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
+      service: "gmail", // Let nodemailer handle host/port automatically
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -78,7 +76,7 @@ async function sendOTPEmail(email, otp) {
     console.log("OTP sent:", info.response);
   } catch (err) {
     console.error("Error sending OTP:", err);
-    throw err; // let route handle it
+    throw err;
   }
 }
 
