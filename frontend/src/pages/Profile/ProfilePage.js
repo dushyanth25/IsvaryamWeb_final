@@ -145,15 +145,7 @@ export default function ProfilePage() {
                 <span>Log Out</span>
               </button>
 
-              {user && !user.googleSignup && (
-                <button
-                  className={classes.changePasswordButton}
-                  onClick={() => setShowChangePassword(true)}
-                  style={{ marginTop: 10 }}
-                >
-                  Change Password
-                </button>
-              )}
+              
             </div>
           </aside>
 
