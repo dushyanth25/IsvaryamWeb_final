@@ -50,45 +50,6 @@ router.post(
   })
 );
 
-// OTP generator
-function generateOTP() {
-  return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
-}
-
-// Send OTP via email
-async function sendOTPEmail(email, otp) {
-  try {
-  const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  connectionTimeout: 30000,
-});
-
-
-    // Verify connection configuration
-    await transporter.verify();
-    console.log("SMTP connection verified");
-
-    const info = await transporter.sendMail({
-      from: `"Isvaryam" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "Your OTP Verification Code",
-      text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
-    });
-
-    console.log("OTP sent:", info.response);
-  } catch (err) {
-    console.error("Error sending OTP:", err);
-    throw err;
-  }
-}
-
-
 // --- Register Route ---
 // In the register route
 router.post(
@@ -136,54 +97,6 @@ router.post(
     }
   })
 );
-
-// Verify OTP
-router.post('/verify-otp', async (req, res) => {
-  try {
-    const { email, otp } = req.body;
-    console.log("Verifying OTP:", email, otp);
-
-    if (!email || !otp) {
-      return res.status(400).send('Email and OTP are required!');
-    }
-
-    const record = await OTPModel.findOne({ email: email.toLowerCase() }).sort({ createdAt: -1 });
-    if (!record) {
-      return res.status(400).send('OTP not found!');
-    }
-
-    if (Date.now() > record.expiresAt) {
-      return res.status(400).send('OTP expired!');
-    }
-
-    if (record.otp !== otp) {
-      return res.status(400).send('Invalid OTP!');
-    }
-
-    // ✅ OTP valid → create permanent user if not exists
-    let user = await UserModel.findOne({ email: email.toLowerCase() });
-    if (!user) {
-      user = await UserModel.create({
-        name: record.name || email.split('@')[0],
-        email: record.email,
-        password: record.password, // hashed password
-        address: record.address,
-        phone: record.phone,
-      });
-    }
-
-    await OTPModel.deleteMany({ email: email.toLowerCase() });
-
-    res.send({
-      message: 'OTP verified successfully!',
-      ...generateTokenResponse(user),
-    });
-
-  } catch (error) {
-    console.error("OTP Verification Error:", error);
-    res.status(500).send('Internal Server Error');
-  }
-});
 
 // Profile update
 router.put(
@@ -236,35 +149,6 @@ router.put(
     res.send('Password changed successfully');
   })
 );
-
-// Send OTP (for signup)
-router.post('/send-otp', async (req, res) => {
-  try {
-    const { email } = req.body;
-    if (!email) return res.status(400).send("Email is required!");
-
-    const existingUser = await UserModel.findOne({ email: email.toLowerCase() });
-    if (existingUser) {
-      return res.status(400).send("User already exists, please login!");
-    }
-
-    const otp = generateOTP();
-
-    await OTPModel.create({
-      email: email.toLowerCase(),
-      otp,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + 5 * 60 * 1000,
-    });
-
-    await sendOTPEmail(email, otp);
-
-    return res.send({ message: "OTP sent successfully!" });
-  } catch (err) {
-    console.error("Error in /send-otp:", err); // ✅ log exact issue
-    return res.status(500).send("Internal server error");
-  }
-});
 
 
 // Google signup
