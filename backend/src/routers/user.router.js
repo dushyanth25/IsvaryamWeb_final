@@ -58,23 +58,17 @@ function generateOTP() {
 // Send OTP via email
 async function sendOTPEmail(email, otp) {
   try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS, // MUST be App Password
-      },
-      connectionTimeout: 30000, // Increase to 30 seconds
-      greetingTimeout: 30000,
-      socketTimeout: 30000,
-      tls: {
-        ciphers: 'SSLv3', // Try different cipher
-        rejectUnauthorized: false
-      },
-      debug: true
-    });
+  const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+  connectionTimeout: 30000,
+});
+
 
     // Verify connection configuration
     await transporter.verify();
