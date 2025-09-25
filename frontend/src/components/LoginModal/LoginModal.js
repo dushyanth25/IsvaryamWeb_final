@@ -304,15 +304,7 @@ export default function LoginModal({ onClose, onSwitchToRegister }) {
             {errors.password && <p className={classes.error}>Password is required</p>}
             
             {/* Forgot Password Link */}
-            <div className={classes.forgotPassword}>
-              <button 
-                type="button" 
-                className={classes.forgotButton}
-                onClick={() => setShowForgotPassword(true)}
-              >
-                Forgot Password?
-              </button>
-            </div>
+           
           </div>
 
 <button className={classes.loginButton} type="submit">
