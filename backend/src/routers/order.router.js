@@ -473,7 +473,7 @@ router.put('/:id', auth, admin, handler(async (req, res) => {
 
   res.json({ message: 'Product updated successfully', product });
 }));
-router.patch('/:id/status', authMiddleware, async (req, res) => {
+/*router.patch('/:id/status', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
@@ -496,6 +496,6 @@ router.patch('/:id/status', authMiddleware, async (req, res) => {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
   }
-});
+});*/
 
 export default router;
