@@ -473,6 +473,29 @@ router.put('/:id', auth, admin, handler(async (req, res) => {
 
   res.json({ message: 'Product updated successfully', product });
 }));
+router.patch('/:id/status', authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
 
+    // Validate status
+    if (!Object.values(OrderStatus).includes(status)) {
+      return res.status(400).json({ message: 'Invalid status' });
+    }
+
+    const order = await OrderModel.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
+
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+
+    res.json(order);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 export default router;
