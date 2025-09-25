@@ -458,6 +458,21 @@ OrderModel.deleteMany({ status: 'NEW' })
 
 // helper to send admin email for new order
 
+router.get('/:id', auth, admin, handler(async (req, res) => {
+  const product = await FoodModel.findById(req.params.id);
+  if (!product) return res.status(404).json({ message: 'Product not found' });
+  res.json(product);
+}));
+
+// ✅ Update product by ID
+router.put('/:id', auth, admin, handler(async (req, res) => {
+  const updatedData = req.body;
+
+  const product = await FoodModel.findByIdAndUpdate(req.params.id, updatedData, { new: true });
+  if (!product) return res.status(404).json({ message: 'Product not found' });
+
+  res.json({ message: 'Product updated successfully', product });
+}));
 
 
 export default router;
