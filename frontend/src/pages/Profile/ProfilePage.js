@@ -153,7 +153,7 @@ export default function ProfilePage() {
             <div className={classes.contentHeader}>
               {activeTab === 'profile' && (
                 <button className={classes.editProfileBtn} onClick={() => setShowEditDialog(true)}>
-                  <FaUserEdit /> Edit Profile
+                  <FaUserEdit /> Edit Profile & Change password
                 </button>
               )}
             </div>
