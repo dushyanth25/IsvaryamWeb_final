@@ -149,7 +149,6 @@ router.post(
     const user = await UserModel.findById(req.user.id);
 
     // ✅ Send admin + user email with populated products
-    await sendAdminOrderEmail(populatedOrder, user);
 
     res.send(populatedOrder);
   })
