@@ -1,100 +1,84 @@
 import { Router } from 'express';
 import handler from 'express-async-handler';
 import auth from '../middleware/auth.mid.js';
+import admin from '../middleware/admin.mid.js';
 import { BAD_REQUEST, UNAUTHORIZED } from '../constants/httpStatus.js';
 import { OrderModel } from '../models/order.model.js';
 import { PaymentModel } from '../models/payment.model.js';
 import { OrderStatus } from '../constants/orderStatus.js';
 import { UserModel } from '../models/user.model.js';
-import { sendEmailReceipt } from '../helpers/mail.helper.js';
+// Removed: import { sendEmailReceipt } from '../helpers/mail.helper.js';
 import { FoodModel } from '../models/food.model.js';
-import admin from '../middleware/admin.mid.js';
 import Razorpay from 'razorpay';
-// At the top, import nodemailer
-import nodemailer from 'nodemailer';
-
 import crypto from 'crypto';
 import DeliveryChargeModel from '../models/deliveryCharge.model.js';
 import cron from 'node-cron';
-// Razorpay instance
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+
+// ✅ Brevo SDK for Transactional Emails
+import * as brevo from '@getbrevo/brevo';
 
 const router = Router();
 router.use(auth);
 
 // Store's state (set this to your actual store state)
 const STORE_STATE = 'Tamil Nadu'; // Change as needed
-// helper to send order email (can be used for admin or user)
 
+// Razorpay instance
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
+// ✅ Brevo API client setup
+const brevoClient = new brevo.TransactionalEmailsApi();
+brevoClient.setApiKey(
+  brevo.TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY
+);
+
+// ✅ Helper: Send admin order email using Brevo
 const sendAdminOrderEmail = async (order, user) => {
   try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.ADMIN_EMAIL,
-        pass: process.env.ADMIN_EMAIL_PASS,
-      },
-    });
-
-    const productDetails = order.items.map(item => {
-      return `
+    const productDetails = order.items
+      .map(item => {
+        return `
         <li>
           <b>${item.product?.name || 'Unknown Product'}</b>  
           Qty: ${item.quantity}  
           Price: ₹${item.price}
-        </li>
-      `;
-    }).join('');
+        </li>`;
+      })
+      .join('');
 
     const htmlContent = `
       <h2>New Order Received</h2>
       <p><b>User:</b> ${user.name} (${user.email})</p>
       <p><b>Status:</b> ${order.status}</p>
-
       <p><b>Phone:</b> ${user.phone || 'N/A'}</p>
       <p><b>Location:</b> ${order.address.street}, ${order.address.city}, ${order.address.state}, ${order.address.pincode}</p>
       <p><b>Total Price:</b> ₹${order.totalPrice}</p>
-      
       <h3>Products:</h3>
-      <ul>
-        ${productDetails}
-      </ul>
-      
+      <ul>${productDetails}</ul>
       <p>Order ID: ${order._id}</p>
       <p>Placed at: ${order.createdAt}</p>
     `;
 
-    // ✅ Send to admin
-    await transporter.sendMail({
-      from: `"Isvaryam Store" <${process.env.ADMIN_EMAIL}>`,
-      to: "v.gugan16@gmail.com", // Admin
-      subject: `🛒 New Order Placed - ${user.name}`,
-      html: htmlContent,
-    });
+    // ✅ Send only to Admin
+    const sendSmtpEmail = new brevo.SendSmtpEmail();
+    sendSmtpEmail.subject = `🛒 New Order Placed - ${user.name}`;
+    sendSmtpEmail.htmlContent = htmlContent;
+    sendSmtpEmail.sender = { name: 'Isvaryam Store', email: process.env.ADMIN_EMAIL };
+    // Send to the ADMIN_EMAIL recipient
+    sendSmtpEmail.to = [{ email: process.env.ADMIN_EMAIL }]; 
 
-    // ✅ Send to user also
-    await transporter.sendMail({
-      from: `"Isvaryam Store" <${process.env.ADMIN_EMAIL}>`,
-      to: "71762233016@cit.edu", // user email
-      subject: `✅ Your Order Confirmation - ${order._id}`,
-      html: `
-        <h2>Thank you for your order, ${user.name}!</h2>
-        ${htmlContent}
-        <p>We will update you once your order is shipped 🚚</p>
-      `,
-    });
+    await brevoClient.sendTransacEmail(sendSmtpEmail);
 
-    console.log("📧 Admin & User emails sent successfully");
-
+    console.log('📧 Admin email sent via Brevo');
   } catch (err) {
-    console.error("❌ Error sending order email:", err);
+    console.error('❌ Error sending Brevo email:', err);
   }
 };
+
 
 // ✅ Create Order in DB
 router.post(
@@ -141,7 +125,6 @@ router.post(
     const user = await UserModel.findById(req.user.id);
     order.userPhone = req.body.phone?.trim() || user.phone?.trim() || 'N/A';
 
-
     order.status = OrderStatus.PENDING;
 
     // Save order
@@ -151,7 +134,9 @@ router.post(
     const populatedOrder = await OrderModel.findById(createdOrder._id)
       .populate('items.product', 'name price images');
 
-    // Send admin + user email
+    // ✅ Send admin email using Brevo
+    await sendAdminOrderEmail(populatedOrder, user);
+
     res.send(populatedOrder);
   })
 );
@@ -245,8 +230,7 @@ router.post(
       order.status = OrderStatus.PAYED;
       await order.save();
 
-      // Send email receipt
-      sendEmailReceipt(order);
+      // Removed: sendEmailReceipt(order); 
 
       res.json({
         success: true,
@@ -266,7 +250,6 @@ router.post(
 );
 
 // In order.router.js - Fix the track order route
-// In order.router.js - Fix the track order route
 router.get(
   '/track/:orderId',
   handler(async (req, res) => {
@@ -282,6 +265,7 @@ router.get(
     return res.send(order);
   })
 );
+
 // ✅ Delete Order
 router.delete('/:id', async (req, res) => {
   try {
@@ -447,7 +431,6 @@ router.get(
     res.json(order);
   })
 );
-
 
 
 const getNewOrderForCurrentUser = async req =>
