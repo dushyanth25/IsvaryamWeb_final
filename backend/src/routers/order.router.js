@@ -494,6 +494,29 @@ router.put('/:id', auth, admin, handler(async (req, res) => {
 
   res.json({ message: 'Product updated successfully', product });
 }));
+
+// Get Order by ID (Admin only)
+router.get(
+  '/admin/order/:id',
+  auth,     // must be authenticated
+  admin,    // must be admin
+  handler(async (req, res) => {
+    const orderId = req.params.id;
+
+    // Find order by ID and populate items and user
+    const order = await OrderModel.findById(orderId)
+      .populate({
+        path: 'items.product',
+        select: 'name price images',
+      })
+      .populate('user', 'name email phone');
+
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+
+    res.json(order);
+  })
+);
+
 /*router.patch('/:id/status', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
