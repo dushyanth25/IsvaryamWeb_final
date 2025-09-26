@@ -43,6 +43,8 @@ const orderSchema = new Schema(
 
     status: { type: String, default: OrderStatus.PENDING },
     user: { type: Schema.Types.ObjectId, ref: 'User' },
+    
+    userPhone: { type: String }, // <-- new field
   },
   {
     timestamps: true,
