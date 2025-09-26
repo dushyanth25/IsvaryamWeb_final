@@ -420,7 +420,7 @@ router.get('/user-purchase-count', auth, async (req, res) => {
 // ✅ Get Order by ID
 router.get(
   '/order/:id',
-  auth, // ensure user is authenticated
+  auth,admin, // ensure user is authenticated
   handler(async (req, res) => {
     const user = await UserModel.findById(req.user.id);
     if (!user) return res.status(401).json({ message: 'Unauthorized' });
