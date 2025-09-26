@@ -14,16 +14,13 @@ import crypto from 'crypto';
 import DeliveryChargeModel from '../models/deliveryCharge.model.js';
 import cron from 'node-cron';
 
-// ❌ FIX for SyntaxError:
-// The package is CommonJS, so we import the default export and access classes from it.
+// ✅ FIX: Import as a namespace object to handle CommonJS modules correctly.
 import brevo from '@getbrevo/brevo'; 
 
 // Safely pull the required classes from the imported object (handling potential .default nesting)
 const BrevoSDK = brevo.default || brevo;
 const TransactionalEmailsApi = BrevoSDK.TransactionalEmailsApi;
-const TransactionalEmailsApiApiKeys = BrevoSDK.TransactionalEmailsApiApiKeys;
 const SendSmtpEmail = BrevoSDK.SendSmtpEmail;
-
 
 const router = Router();
 router.use(auth);
@@ -37,12 +34,13 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// ✅ Brevo API client setup - Changed instantiation
+// ✅ Brevo API client setup - Final attempt at robust initialization
 const brevoClient = new TransactionalEmailsApi();
-brevoClient.setApiKey(
-  TransactionalEmailsApiApiKeys.apiKey,
-  process.env.BREVO_API_KEY
-);
+
+// Using the constant string 'apiKey' directly as per Brevo SDK documentation
+// to set the API Key on the client instance, avoiding undefined constant access.
+brevoClient.setApiKey('apiKey', process.env.BREVO_API_KEY);
+
 
 // ✅ Helper: Send admin order email using Brevo
 const sendAdminOrderEmail = async (order, user) => {
