@@ -14,12 +14,16 @@ import crypto from 'crypto';
 import DeliveryChargeModel from '../models/deliveryCharge.model.js';
 import cron from 'node-cron';
 
-// ✅ Brevo SDK: Use destructured import to correctly get the classes
-import { 
-  TransactionalEmailsApi, 
-  TransactionalEmailsApiApiKeys, 
-  SendSmtpEmail 
-} from '@getbrevo/brevo';
+// ❌ FIX for SyntaxError:
+// The package is CommonJS, so we import the default export and access classes from it.
+import brevo from '@getbrevo/brevo'; 
+
+// Safely pull the required classes from the imported object (handling potential .default nesting)
+const BrevoSDK = brevo.default || brevo;
+const TransactionalEmailsApi = BrevoSDK.TransactionalEmailsApi;
+const TransactionalEmailsApiApiKeys = BrevoSDK.TransactionalEmailsApiApiKeys;
+const SendSmtpEmail = BrevoSDK.SendSmtpEmail;
+
 
 const router = Router();
 router.use(auth);
