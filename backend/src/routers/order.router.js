@@ -417,27 +417,35 @@ router.get('/user-purchase-count', auth, async (req, res) => {
   }
 });
 
-// ✅ Get Order by ID
+// Get order by ID
 router.get(
   '/order/:id',
-  auth,admin, // ensure user is authenticated
+  auth, // make sure user is authenticated
   handler(async (req, res) => {
     const user = await UserModel.findById(req.user.id);
     if (!user) return res.status(401).json({ message: 'Unauthorized' });
 
     const filter = { _id: req.params.id };
-    
-    // If not admin, only allow fetching user's own order
+
+    // Only allow non-admin users to fetch their own order
     if (!user.isAdmin) {
       filter.user = user._id;
     }
 
-    const order = await OrderModel.findOne(filter).populate('items.product').populate('user', 'name email phone');
+    // Populate items.product and user
+    const order = await OrderModel.findOne(filter)
+      .populate({
+        path: 'items.product',
+        select: 'name price images', // adjust fields
+      })
+      .populate('user', 'name email phone');
+
     if (!order) return res.status(404).json({ message: 'Order not found' });
 
     res.json(order);
   })
 );
+
 
 
 const getNewOrderForCurrentUser = async req =>
