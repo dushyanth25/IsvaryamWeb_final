@@ -517,7 +517,7 @@ router.get(
   })
 );
 
-router.patch('/:id/status', authMiddleware, async (req, res) => {
+router.patch('/:id/status', admin, async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
