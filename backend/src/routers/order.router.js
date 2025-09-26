@@ -14,8 +14,12 @@ import crypto from 'crypto';
 import DeliveryChargeModel from '../models/deliveryCharge.model.js';
 import cron from 'node-cron';
 
-// ✅ Brevo SDK for Transactional Emails
-import * as brevo from '@getbrevo/brevo';
+// ✅ Brevo SDK: Use destructured import to correctly get the classes
+import { 
+  TransactionalEmailsApi, 
+  TransactionalEmailsApiApiKeys, 
+  SendSmtpEmail 
+} from '@getbrevo/brevo';
 
 const router = Router();
 router.use(auth);
@@ -29,10 +33,10 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// ✅ Brevo API client setup
-const brevoClient = new brevo.TransactionalEmailsApi();
+// ✅ Brevo API client setup - Changed instantiation
+const brevoClient = new TransactionalEmailsApi();
 brevoClient.setApiKey(
-  brevo.TransactionalEmailsApiApiKeys.apiKey,
+  TransactionalEmailsApiApiKeys.apiKey,
   process.env.BREVO_API_KEY
 );
 
@@ -63,8 +67,8 @@ const sendAdminOrderEmail = async (order, user) => {
       <p>Placed at: ${order.createdAt}</p>
     `;
 
-    // ✅ Send only to Admin
-    const sendSmtpEmail = new brevo.SendSmtpEmail();
+    // ✅ Send only to Admin - Changed instantiation
+    const sendSmtpEmail = new SendSmtpEmail();
     sendSmtpEmail.subject = `🛒 New Order Placed - ${user.name}`;
     sendSmtpEmail.htmlContent = htmlContent;
     sendSmtpEmail.sender = { name: 'Isvaryam Store', email: process.env.ADMIN_EMAIL };
