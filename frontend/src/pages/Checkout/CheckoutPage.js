@@ -161,6 +161,8 @@ export default function CheckoutPage() {
           <form onSubmit={handleSubmit(submit)}>
             <div className={classes.inputs}>
               <div className={classes.input_group}>
+    
+              <div className={classes.input_group}>
   <label htmlFor="name">Full Name</label>
   <input
     id="name"
