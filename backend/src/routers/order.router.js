@@ -139,7 +139,8 @@ router.post(
 
     // ✅ Ensure phone is stored
     const user = await UserModel.findById(req.user.id);
-    order.phone = req.body.phone || user.phone || '';
+    order.userPhone = req.body.phone?.trim() || user.phone?.trim() || 'N/A';
+
 
     order.status = OrderStatus.PENDING;
 
@@ -154,7 +155,6 @@ router.post(
     res.send(populatedOrder);
   })
 );
-
 
 
 // ✅ Create Razorpay Payment Order
