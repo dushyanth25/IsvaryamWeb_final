@@ -517,7 +517,7 @@ router.get(
   })
 );
 
-/*router.patch('/:id/status', authMiddleware, async (req, res) => {
+router.patch('/:id/status', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
@@ -540,6 +540,6 @@ router.get(
     console.error(err);
     res.status(500).json({ message: 'Server error' });
   }
-});*/
+});
 
 export default router;
