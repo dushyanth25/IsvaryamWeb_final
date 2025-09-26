@@ -181,5 +181,34 @@ router.get(
     res.send(user);
   })
 );
+// ✅ Get all users (Admin only)
+router.get(
+  '/',
+  auth,     // Auth middleware
+  admin,    // Admin-only middleware
+  handler(async (req, res) => {
+    const users = await UserModel.find().select('-password'); // Exclude passwords
+    res.send(users);
+  })
+);
+
+// ✅ Block/unblock a user (Admin only)
+router.patch(
+  '/:id/block',
+  auth,
+  admin,
+  handler(async (req, res) => {
+    const { id } = req.params;
+    const { block } = req.body; // block = true or false
+
+    const user = await UserModel.findById(id);
+    if (!user) return res.status(404).send('User not found');
+
+    user.isBlocked = !!block;
+    await user.save();
+
+    res.send({ message: `User ${block ? 'blocked' : 'unblocked'} successfully`, user });
+  })
+);
 
 export default router;
