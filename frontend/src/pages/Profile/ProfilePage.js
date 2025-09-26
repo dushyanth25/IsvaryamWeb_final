@@ -336,7 +336,7 @@ export default function ProfilePage() {
       minLength: { value: 6, message: 'Password must be at least 6 characters' },
       pattern: {
         value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$/,
-        message: 'Must include uppercase, lowercase, number & special character',
+        message: 'Contains 8 character Must include uppercase, lowercase, number & special character',
       },
     })}
   />
