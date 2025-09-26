@@ -300,7 +300,7 @@
 }
 
 /* Previously: @media (max-width: 768px) */
-@media (max-width: 1273px) {
+@media (max-width: 1290px) {
   .container {
     flex-direction: row;
     height: auto;
