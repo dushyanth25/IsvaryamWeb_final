@@ -21,6 +21,8 @@ import brevo from '@getbrevo/brevo';
 const BrevoSDK = brevo.default || brevo;
 const TransactionalEmailsApi = BrevoSDK.TransactionalEmailsApi;
 const SendSmtpEmail = BrevoSDK.SendSmtpEmail;
+// Include ApiClient for global configuration
+const ApiClient = BrevoSDK.ApiClient; 
 
 const router = Router();
 router.use(auth);
@@ -34,12 +36,17 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// ✅ Brevo API client setup - Final attempt at robust initialization
-const brevoClient = new TransactionalEmailsApi();
+// --- BREVO GLOBAL AUTHENTICATION FIX ---
+// 1. Get the default global client instance
+const defaultClient = ApiClient.instance;
 
-// Using the constant string 'apiKey' directly as per Brevo SDK documentation
-// to set the API Key on the client instance, avoiding undefined constant access.
-brevoClient.setApiKey('apiKey', process.env.BREVO_API_KEY);
+// 2. Set the API key using the documented Brevo SDK method
+const apiKeyAuth = defaultClient.authentications['api-key'];
+apiKeyAuth.apiKey = process.env.BREVO_API_KEY;
+
+// 3. Create the TransactionalEmailsApi client instance (it now inherits the global key)
+const brevoClient = new TransactionalEmailsApi();
+// --- END BREVO FIX ---
 
 
 // ✅ Helper: Send admin order email using Brevo
