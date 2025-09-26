@@ -326,15 +326,23 @@ export default function ProfilePage() {
                       />
                     </div>
 
-                    <div className={classes.inputGroup}>
-                      <label>New Password (optional)</label>
-                      <input
-                        className={classes.dialogInput}
-                        type="password"
-                        placeholder="Enter new password"
-                        {...register('password')}
-                      />
-                    </div>
+                  <div className={classes.inputGroup}>
+  <label>New Password (optional)</label>
+  <input
+    className={classes.dialogInput}
+    type="password"
+    placeholder="Enter new password"
+    {...register('password', {
+      minLength: { value: 6, message: 'Password must be at least 6 characters' },
+      pattern: {
+        value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$/,
+        message: 'Must include uppercase, lowercase, number & special character',
+      },
+    })}
+  />
+  {errors.password && <p className={classes.error}>{errors.password.message}</p>}
+</div>
+
 
                     <div className={classes.dialogActions}>
                       <button
