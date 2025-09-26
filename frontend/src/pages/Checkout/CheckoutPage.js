@@ -78,6 +78,8 @@ export default function CheckoutPage() {
 
     const orderToSend = {
       name: data.name,
+
+  phone: data.phone, // ✅ add this line
       address: addressObj,
       state: data.state,
       pincode: data.pincode,
@@ -159,76 +161,107 @@ export default function CheckoutPage() {
           <form onSubmit={handleSubmit(submit)}>
             <div className={classes.inputs}>
               <div className={classes.input_group}>
-                <label htmlFor="name">Full Name</label>
-                <input
-                  id="name"
-                  className={classes.input_field}
-                  defaultValue={user.name}
-                  placeholder="Enter your full name"
-                  {...register('name', { required: true })}
-                />
-                {errors.name && <span className={classes.error}>Name is required</span>}
-              </div>
-              
-              <div className={classes.input_group}>
-                <label htmlFor="doorNumber">Door Number</label>
-                <input
-                  id="doorNumber"
-                  className={classes.input_field}
-                  defaultValue={user.address?.doorNumber}
-                  {...register('doorNumber', { required: true })}
-                />
-                {errors.doorNumber && <span className={classes.error}>Door Number is required</span>}
-              </div>
-              <div className={classes.input_group}>
-                <label htmlFor="street">Street</label>
-                <input
-                  id="street"
-                  className={classes.input_field}
-                  defaultValue={user.address?.street}
-                  {...register('street', { required: true })}
-                />
-                {errors.street && <span className={classes.error}>Street is required</span>}
-              </div>
-              <div className={classes.input_group}>
-                <label htmlFor="area">Area</label>
-                <input
-                  id="area"
-                  className={classes.input_field}
-                  defaultValue={user.address?.area}
-                  {...register('area', { required: true })}
-                />
-                {errors.area && <span className={classes.error}>Area is required</span>}
-              </div>
-              <div className={classes.input_group}>
-                <label htmlFor="district">District</label>
-                <input
-                  id="district"
-                  className={classes.input_field}
-                  defaultValue={user.address?.district}
-                  {...register('district', { required: true })}
-                />
-                {errors.district && <span className={classes.error}>District is required</span>}
-              </div>
-              <div className={classes.input_group}>
-                <label htmlFor="state">State</label>
-                <input
-                  id="state"
-                  className={classes.input_field}
-                  defaultValue={user.address?.state}
-                  {...register('state', { required: true })}
-                />
-                {errors.state && <span className={classes.error}>State is required</span>}
-              </div>
-              <div className={classes.input_group}>
-                <label htmlFor="pincode">Pincode</label>
-                <input
-                  id="pincode"
-                  className={classes.input_field}
-                  defaultValue={user.address?.pincode}
-                  {...register('pincode', { required: true })}
-                />
-                {errors.pincode && <span className={classes.error}>Pincode is required</span>}
+  <label htmlFor="name">Full Name</label>
+  <input
+    id="name"
+    className={classes.input_field}
+    defaultValue={user.name}
+    placeholder="Enter your full name"
+    {...register('name', { required: 'Name is required' })}
+  />
+  {errors.name && <span className={classes.error}>{errors.name.message}</span>}
+</div>
+
+<div className={classes.input_group}>
+  <label htmlFor="phone">Mobile Number</label>
+  <input
+    id="phone"
+    className={classes.input_field}
+    defaultValue={user.phone || ''}
+    placeholder="Enter your mobile number"
+    {...register('phone', {
+      required: 'Mobile number is required',
+      pattern: {
+        value: /^[0-9]{10}$/,
+        message: 'Enter a valid 10-digit mobile number'
+      }
+    })}
+  />
+  {errors.phone && <span className={classes.error}>{errors.phone.message}</span>}
+</div>
+
+<div className={classes.input_group}>
+  <label htmlFor="doorNumber">Door Number</label>
+  <input
+    id="doorNumber"
+    className={classes.input_field}
+    defaultValue={user.address?.doorNumber}
+    {...register('doorNumber', { required: 'Door Number is required' })}
+  />
+  {errors.doorNumber && <span className={classes.error}>{errors.doorNumber.message}</span>}
+</div>
+
+<div className={classes.input_group}>
+  <label htmlFor="street">Street</label>
+  <input
+    id="street"
+    className={classes.input_field}
+    defaultValue={user.address?.street}
+    {...register('street', { required: 'Street is required' })}
+  />
+  {errors.street && <span className={classes.error}>{errors.street.message}</span>}
+</div>
+
+<div className={classes.input_group}>
+  <label htmlFor="area">Area</label>
+  <input
+    id="area"
+    className={classes.input_field}
+    defaultValue={user.address?.area}
+    {...register('area', { required: 'Area is required' })}
+  />
+  {errors.area && <span className={classes.error}>{errors.area.message}</span>}
+</div>
+
+<div className={classes.input_group}>
+  <label htmlFor="district">District</label>
+  <input
+    id="district"
+    className={classes.input_field}
+    defaultValue={user.address?.district}
+    {...register('district', { required: 'District is required' })}
+  />
+  {errors.district && <span className={classes.error}>{errors.district.message}</span>}
+</div>
+
+<div className={classes.input_group}>
+  <label htmlFor="state">State</label>
+  <input
+    id="state"
+    className={classes.input_field}
+    defaultValue={user.address?.state}
+    {...register('state', { required: 'State is required' })}
+  />
+  {errors.state && <span className={classes.error}>{errors.state.message}</span>}
+</div>
+
+<div className={classes.input_group}>
+  <label htmlFor="pincode">Pincode</label>
+  <input
+    id="pincode"
+    className={classes.input_field}
+    defaultValue={user.address?.pincode}
+    {...register('pincode', {
+      required: 'Pincode is required',
+      pattern: {
+        value: /^[0-9]{6}$/,
+        message: 'Pincode must be 6 digits'
+      }
+    })}
+  />
+  {errors.pincode && <span className={classes.error}>{errors.pincode.message}</span>}
+</div>
+
               </div>
             </div>
             
