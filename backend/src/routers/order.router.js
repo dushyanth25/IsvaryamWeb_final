@@ -132,27 +132,29 @@ router.post(
       deliveryCharge = 200;
     }
 
-    // ✅ persist deliveryCharge and recalc totalPrice
+    // Persist deliveryCharge and recalc totalPrice
     order.deliveryCharge = deliveryCharge;
     order.totalPrice = order.totalPrice + deliveryCharge;
     order.user = req.user.id;
+
+    // ✅ Ensure phone is stored
+    const user = await UserModel.findById(req.user.id);
+    order.phone = req.body.phone || user.phone || '';
+
     order.status = OrderStatus.PENDING;
 
     // Save order
     const createdOrder = await OrderModel.create(order);
 
-    // ✅ Populate products for email
+    // Populate products for email
     const populatedOrder = await OrderModel.findById(createdOrder._id)
       .populate('items.product', 'name price images');
 
-    // ✅ Get user info from DB
-    const user = await UserModel.findById(req.user.id);
-
-    // ✅ Send admin + user email with populated products
-
+    // Send admin + user email
     res.send(populatedOrder);
   })
 );
+
 
 
 // ✅ Create Razorpay Payment Order
