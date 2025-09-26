@@ -210,5 +210,48 @@ router.patch(
     res.send({ message: `User ${block ? 'blocked' : 'unblocked'} successfully`, user });
   })
 );
+router.delete("/:id", auth, admin, async (req, res) => {
+  try {
+    const user = await UserModel.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json({ message: "User deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Get single user by ID (for editing)
+router.get("/:id", auth, admin, async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Update user (Admin only)
+router.put("/:id", auth, admin, async (req, res) => {
+  try {
+    const { name, email, phone, isAdmin } = req.body;
+
+    const user = await UserModel.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.name = name ?? user.name;
+    user.email = email ?? user.email;
+    user.phone = phone ?? user.phone;
+    user.isAdmin = isAdmin ?? user.isAdmin;
+
+    await user.save();
+    res.json({ message: "User updated successfully", user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 export default router;
