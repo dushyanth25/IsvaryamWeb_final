@@ -42,6 +42,7 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:5000',
   'https://isvaryam.com',
+  'https://www.isvaryam.com/',
   
   'http://localhost:3000',
   'https://isvaryam-admin.onrender.com',
