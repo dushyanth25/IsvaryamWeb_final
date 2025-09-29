@@ -123,8 +123,8 @@ const clickTimeout = useRef(null);
     const fetchAssets = async () => {
       try {
         const [imagesRes, colorRes] = await Promise.all([
-          axios.get('https://isvaryamweb-final.onrender.com/api/im/images'),
-          axios.get('https://isvaryamweb-final.onrender.com/api/colors/colorhome'),
+          axios.get('https://www.isvaryam.com/api/im/images'),
+          axios.get('https://www.isvaryam.com/api/colors/colorhome'),
         ]);
 
 
