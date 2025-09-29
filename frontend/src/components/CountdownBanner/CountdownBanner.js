@@ -46,7 +46,7 @@ const CountdownBanner = () => {
 
   // Fetch background color from API
   useEffect(() => {
-    fetch('https://isvaryamweb-final.onrender.com/api/colors/colorheader')
+    fetch('https://www.isvaryam.com/api/colors/colorheader')
       .then(res => res.json())
       .then(data => {
         if (data?.color) {
