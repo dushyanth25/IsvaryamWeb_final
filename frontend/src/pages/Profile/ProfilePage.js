@@ -48,7 +48,7 @@ export default function ProfilePage() {
   const [bgColor, setBgColor] = useState('#ffffff'); // default
 
   useEffect(() => {
-    axios.get('https://isvaryamweb-final.onrender.com/api/colors/colorprofile')
+    axios.get('https://www.isvaryam.com/api/colors/colorprofile')
       .then((res) => setBgColor(res.data.color))
       .catch((err) => console.error('Error fetching background color:', err));
   }, []);
