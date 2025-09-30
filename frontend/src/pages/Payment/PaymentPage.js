@@ -197,7 +197,7 @@ const token = user?.token?.trim();
         key: process.env.REACT_APP_RAZORPAY_KEY_ID,
         amount: razorpayOrder.amount, // already in paise
         currency: razorpayOrder.currency,
-        name: 'Your Company Name',
+        name: 'Isvaryam',
         description: `Order #${order._id}`,
         order_id: razorpayOrder.orderId, // razorpay orderId from backend
         handler: async function (response) {
