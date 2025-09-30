@@ -257,7 +257,7 @@ const token = user?.token?.trim();
         onClick={displayRazorpay}
         className={classes.razorpayButton}
       >
-        Pay with Razorpay
+        Pay with UPI
       </button>
       <p className={classes.razorpayNote}>
         You will be redirected to Razorpay's secure payment page
