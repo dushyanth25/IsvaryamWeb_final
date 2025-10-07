@@ -123,7 +123,7 @@ const clickTimeout = useRef(null);
  useEffect(() => {
   const fetchAssets = async () => {
     try {
-      const isMobile = window.innerWidth <= 768;
+      const isMobile = window.innerWidth <= 1000;
       const screenType = isMobile ? 'mobile' : 'desktop';
 
       const [imagesRes, colorRes] = await Promise.all([
