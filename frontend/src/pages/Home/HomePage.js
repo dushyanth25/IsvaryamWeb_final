@@ -127,7 +127,7 @@ const clickTimeout = useRef(null);
       const screenType = isMobile ? 'mobile' : 'desktop';
 
       const [imagesRes, colorRes] = await Promise.all([
-        axios.get('https://www.isvaryam.com/api/im/images?screen=${screenType}'),
+        axios.get(`https://www.isvaryam.com/api/im/images?screen=${screenType}`),
         axios.get('https://www.isvaryam.com/api/colors/colorhome'),
       ]);
 
