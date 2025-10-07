@@ -119,33 +119,30 @@ const clickTimeout = useRef(null);
   }, []);
 
   // --- Fetch images and color from backend ---
-  useEffect(() => {
-    const fetchAssets = async () => {
-      try {
-        const [imagesRes, colorRes] = await Promise.all([
-          axios.get('https://www.isvaryam.com/api/im/images'),
-          axios.get('https://www.isvaryam.com/api/colors/colorhome'),
-        ]);
+// --- Fetch images and color from backend ---
+ useEffect(() => {
+  const fetchAssets = async () => {
+    try {
+      const isMobile = window.innerWidth <= 768;
+      const screenType = isMobile ? 'mobile' : 'desktop';
 
+      const [imagesRes, colorRes] = await Promise.all([
+        axios.get('https://www.isvaryam.com/api/im/images?screen=${screenType}'),
+        axios.get('https://www.isvaryam.com/api/colors/colorhome'),
+      ]);
 
-        if (Array.isArray(imagesRes.data) && imagesRes.data.length > 0) {
-          setBannerImages(imagesRes.data); // use API images
-        } else {
-          setBannerImages([]); // no images
-        }
+      setBannerImages(Array.isArray(imagesRes.data) ? imagesRes.data : []);
+      setBgColor(colorRes.data?.color || '#ffffff');
 
-        if (colorRes.data?.color) {
-          setBgColor(colorRes.data.color);
-        }
-      } catch (err) {
-        console.error('Error loading banner or color:', err);
-        setBannerImages([]);
-        setBgColor('#ffffff');
-      }
-    };
+    } catch (err) {
+      console.error('Error loading banner or color:', err);
+      setBannerImages([]);
+      setBgColor('#ffffff');
+    }
+  };
 
-    fetchAssets();
-  }, []);
+  fetchAssets();
+}, []);
 
   // --- Prepare dynamic backgrounds ---
   const dynamicBackgrounds =
