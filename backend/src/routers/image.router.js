@@ -1,17 +1,21 @@
-// color.router.js (or wherever your route is)
 import express from "express";
-import Color from "../models/image.model.js";  // your model
+import { Image, Image2 } from "../models/image.model.js";
 
 const router = express.Router();
 
+// ✅ Route to fetch images based on screen type
 router.get("/images", async (req, res) => {
   try {
-    // Fetch only the `imageUrl` field
-    const images = await Color.find({}, "imageUrl");
+    const { screen } = req.query; // 'mobile' or 'desktop'
+    let images;
 
-    // Return only array of image URLs
+    if (screen === "mobile") {
+      images = await Image2.find({}, "imageUrl");
+    } else {
+      images = await Image.find({}, "imageUrl");
+    }
+
     const urls = images.map(img => img.imageUrl);
-
     res.json(urls);
   } catch (error) {
     console.error("Error fetching images:", error);
